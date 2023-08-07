@@ -10,14 +10,14 @@ class Objet(pygame.sprite.Sprite):
     Sert à instancier des objets de type Rect.
     :return None'''
 
-    def __init__(self, image):
+    def __init__(self, image, indexdefaut):
         pygame.sprite.Sprite.__init__(self)
         self.listeimagespouranimation = []
         self.index = 0
         for element in image:
             self.listeimagespouranimation.append(pygame.image.load(element).convert_alpha())
 
-        self.image = self.listeimagespouranimation[14]
+        self.image = self.listeimagespouranimation[indexdefaut]
         self.image.set_colorkey(couleurtransparente)
         self.image = pg.transform.scale(self.image, (self.image.get_width() * 2, self.image.get_height() * 2))
         self.rect = self.image.get_rect()
@@ -25,21 +25,30 @@ class Objet(pygame.sprite.Sprite):
         self.rect.w = self.image.get_width()
         self.timer = 0
 
+class Epee(Objet):
+    def __init__(self, images, indexdefaut):
+        Objet.__init__(self, images,indexdefaut)
+        self.rect.left = 600
+        self.rect.bottom = fenetrehauteur -6
 
+    def scrollinggauche (self):
+        self.rect.move_ip(-vitesse, 0)
+    def scrollingdroite(self):
+        self.rect.move_ip(vitesse, 0)
 class Olive(Objet):
     '''
     :type Objet
     :arg Vecteur avec les fichiers pour afficher les animations du sprite
      '''
 
-    def __init__(self, image):
-        Objet.__init__(self, image)
-
-        self.rect.bottom = fenetrehauteur
+    def __init__(self, image, indexdefaut):
+        Objet.__init__(self, image, indexdefaut)
+        self.rect.bottom = fenetrehauteur -6
         self.rect.left = (fenetrelargeur - self.rect.w) // 10
         self.hauteursaut = hauteursaut
         self.entraindesauter = False
         self.iterateur = 0
+        self.estchevalier = estchevalier
 
     def deplacerGauche(self, indexdepart, indexarret):
         self.framedelai = self.timer
@@ -51,6 +60,7 @@ class Olive(Objet):
         if self.rect.x >= (fenetrelargeur - self.rect.w) // 2:
             self.rect.move_ip(0, 0)
         return 'G'
+
 
     def deplacerDroite(self, indexdepart, indexarret):
         self.framedelai = self.timer
