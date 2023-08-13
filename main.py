@@ -2,8 +2,8 @@
 #
 #       Jeu en Pygame pour projet EESI
 #       Graphics by Marie
-#       Coding by Fred - python 3.8
-#       ver. alpha-0.1
+#       Coding by Fred - python ver. 3.8.5
+#       ver. alpha-0.4
 #
 #################################################################
 import sys
@@ -73,6 +73,8 @@ def main():
     listeolivesprite = pg.sprite.Group()
     listeoliveitemssprites = pg.sprite.Group()
     listeitemssprites = pg.sprite.Group()
+    listeepeesprites = pg.sprite.Group()
+
     #########################################
     # instanciation des sprites
     #########################################
@@ -93,6 +95,7 @@ def main():
     listeolivesprite.add(olive)
     listeitemssprites.add(epee)
     listeglobalesprites.add(epee)
+    listeepeesprites.add(epee)
 
     #########################################
     # boucle principale du jeu
@@ -209,7 +212,10 @@ def main():
             # Gestion des sprites et tests de collisions
             #########################################
             listecollisionsoliveepee = pg.sprite.spritecollide(
-                olive, listeitemssprites, True
+                olive, listeepeesprites, True
+            )
+            listecollisionsoliveitems = pg.sprite.spritecollide(
+                olive, listeitemssprites, False
             )
 
             # on update tous les sprites et on les affiche
@@ -236,7 +242,6 @@ def main():
             # affichage de la zone de score et de vies
             #########################################
             if listecollisionsoliveepee :
-
                 zonescoreetvie.calculScore(20)
 
             zonescoreetvie.affichagescore(fenetre)
