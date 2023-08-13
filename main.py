@@ -147,18 +147,23 @@ def main():
         #########################################
         if level == 0 :
             fenetre.fill(fenetrecouleur)
-            police = pg.font.Font(policeurl, taillepolice)
-            splashtexte = police.render(
+            police1 = pg.font.Font(policeurl, taillepolice)
+            police2 = pg.font.Font(policeurl, taillepolice)
+            splashtexte = police1.render(
                 "Appuyez sur la touche ENTREE pour démarrer !", True, (255, 0, 0), (0, 5, 255)
             )
-            splashtexte2 = police.render(
+            splashtexte2 = police2.render(
                 "Appuyez sur la touche ENTREE pour démarrer !", True, (0, 0, 255), (255, 5, 0)
             )
             pg.time.wait(500)
             fenetre.blit(splashtexte, (10, fenetrehauteur//2-taillepolice//2))
+            pg.time.delay(10)
+            pg.display.flip()
             pg.time.wait(500)
             fenetre.fill(fenetrecouleur)
             fenetre.blit(splashtexte2, (10, fenetrehauteur//2-taillepolice//2))
+            pg.time.delay(10)
+            pg.display.flip()
         #########################################
         # niveau 1
         #########################################
@@ -228,14 +233,14 @@ def main():
             if listecollisionsoliveepee:
                 oliveestchevalier = True
                 blip.play(0, 0, 0)
-
+            pg.time.delay(10)
+            pg.display.flip()
         if level == 2 :
             pass
         if level == 3 :
             pass
         # rafraichissement de l'écran avec le délai
-        pg.time.delay(10)
-        pg.display.flip()
+
 
 
 if __name__ == "__main__":
