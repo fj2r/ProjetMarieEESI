@@ -8,15 +8,18 @@
 #################################################################
 
 jeuetatinitial = True
-
+leveldemarrage = 0
 fenetrelargeur, fenetrehauteur = 800, 600
 fenetretaille = (fenetrelargeur, fenetrehauteur)
 fenetrecouleur = (4, 9, 46)
 
 scoreinitial = 0
+vieoliveinitiale = 5
 
 vitesse = 15
 hauteursaut = 20
+policepardefaut = 'ttf/PixeloidSans.ttf'
+taillepolice = 24
 
 couleurtransparente = (234, 21, 227)
 
