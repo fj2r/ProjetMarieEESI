@@ -39,6 +39,8 @@ def main():
     #########################################
     score = scoreinitial
     vieolive = vieoliveinitiale
+    iterateurscore = 0
+    zonescoreetvie = AffichageScoreVies(fenetre, vieoliveinitiale, score, iterateurscore)
 
     #########################################
     # declaration des sons du jeu
@@ -169,6 +171,8 @@ def main():
         #########################################
         if level == 1:
 
+
+
             #########################################
             # affichage des décors et éléments de sprites
             #########################################
@@ -228,6 +232,14 @@ def main():
                     fenetrehauteur - herbedevant.get_height(),
                 ),
             )
+            #########################################
+            # affichage de la zone de score et de vies
+            #########################################
+            if listecollisionsoliveepee :
+
+                zonescoreetvie.calculScore(20)
+
+            zonescoreetvie.affichagescore(fenetre)
 
             # Gestion des sons
             if listecollisionsoliveepee:

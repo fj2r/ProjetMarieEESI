@@ -1,6 +1,6 @@
 import pygame as pg
 import pygame.sprite
-
+from fonctions import *
 from conf import *
 
 
@@ -110,3 +110,30 @@ class Olive(Objet):
                 self.mouvementsAnimations(5, 5)
         print(saut)
         return saut
+
+class AffichageScoreVies(pygame.font.Font):
+    def __init__(self,fenetre, vies, score, iterateur):
+        pygame.font.Font.__init__(self)
+        self.policescore =pg.font.Font(policepardefaut, 24)
+        self.policeviesolive = pg.font.Font(policepardefaut, 24)
+        self.vies = vies
+        self.score = score
+        self.iterateur = iterateur
+
+    def calculScore(self, gain):
+        self.score += gain
+        self.iterateur += 1
+    def perteVies (self) :
+        self.vies -= 1
+        return self.vies
+    def gainVies (self) :
+        self.vies += 1
+        return self.vies
+    def affichagescore (self,fenetre):
+        barredevie = ""
+        for i in range (0, self.vies, 1):
+            barredevie = barredevie + "|"
+        self.scoreolive = self.policescore.render("Score : %s" % self.score, 0, (255,255,255))
+        self.viesolive = self.policeviesolive.render("Vie : %s" % barredevie, 0, (255,255,255))
+        fenetre.blit(self.scoreolive, (20,20))
+        fenetre.blit(self.viesolive, (fenetrelargeur-100, 20))
