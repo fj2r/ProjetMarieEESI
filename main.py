@@ -14,9 +14,9 @@ from fonctions import *
 
 
 def main():
-    pg.init()           # initialisation des modules
-    pg.mixer.init()     # initialisation du mixer son
-    pg.font.init()      # initialisation des modules de police
+    pg.init()  # initialisation des modules
+    pg.mixer.init()  # initialisation du mixer son
+    pg.font.init()  # initialisation des modules de police
 
     jeu = jeuetatinitial
     level = leveldemarrage
@@ -40,7 +40,9 @@ def main():
     score = scoreinitial
     vieolive = vieoliveinitiale
     iterateurscore = 0
-    zonescoreetvie = AffichageScoreVies(fenetre, vieoliveinitiale, score, iterateurscore)
+    zonescoreetvie = AffichageScoreVies(
+        fenetre, vieoliveinitiale, score, iterateurscore
+    )
 
     #########################################
     # declaration des sons du jeu
@@ -117,7 +119,7 @@ def main():
                 sys.exit()
 
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_RETURN or pg.K_KP_ENTER :
+                if event.key == pg.K_RETURN or pg.K_KP_ENTER:
                     level = 1
                 if event.key == pg.K_ESCAPE:
                     jeu = False
@@ -150,31 +152,35 @@ def main():
         #########################################
         # niveau 0 - Splash screen
         #########################################
-        if level == 0 :
+        if level == 0:
             fenetre.fill(fenetrecouleur)
             police1 = pg.font.Font(policeurl, taillepolice)
             police2 = pg.font.Font(policeurl, taillepolice)
             splashtexte = police1.render(
-                "Appuyez sur la touche ENTREE pour démarrer !", True, (255, 0, 0), (0, 5, 255)
+                "Appuyez sur la touche ENTREE pour démarrer !",
+                True,
+                (255, 0, 0),
+                (0, 5, 255),
             )
             splashtexte2 = police2.render(
-                "Appuyez sur la touche ENTREE pour démarrer !", True, (0, 0, 255), (255, 5, 0)
+                "Appuyez sur la touche ENTREE pour démarrer !",
+                True,
+                (0, 0, 255),
+                (255, 5, 0),
             )
             pg.time.wait(500)
-            fenetre.blit(splashtexte, (10, fenetrehauteur//2-taillepolice//2))
+            fenetre.blit(splashtexte, (10, fenetrehauteur // 2 - taillepolice // 2))
             pg.time.delay(10)
             pg.display.flip()
             pg.time.wait(500)
             fenetre.fill(fenetrecouleur)
-            fenetre.blit(splashtexte2, (10, fenetrehauteur//2-taillepolice//2))
+            fenetre.blit(splashtexte2, (10, fenetrehauteur // 2 - taillepolice // 2))
             pg.time.delay(10)
             pg.display.flip()
         #########################################
         # niveau 1
         #########################################
         if level == 1:
-
-
 
             #########################################
             # affichage des décors et éléments de sprites
@@ -230,7 +236,9 @@ def main():
                     fenetrehauteur - herbedevant.get_height(),
                 ),
             )
-            fenetre.blit(herbedevant, (decorx, fenetrehauteur - herbedevant.get_height()))
+            fenetre.blit(
+                herbedevant, (decorx, fenetrehauteur - herbedevant.get_height())
+            )
             fenetre.blit(
                 herbedevant,
                 (
@@ -241,7 +249,7 @@ def main():
             #########################################
             # affichage de la zone de score et de vies
             #########################################
-            if listecollisionsoliveepee :
+            if listecollisionsoliveepee:
                 zonescoreetvie.calculScore(20)
 
             zonescoreetvie.affichagescore(fenetre)
@@ -252,11 +260,10 @@ def main():
                 blip.play(0, 0, 0)
             pg.time.delay(10)
             pg.display.flip()
-        if level == 2 :
+        if level == 2:
             pass
-        if level == 3 :
+        if level == 3:
             pass
-        # rafraichissement de l'écran avec le délai
 
 
 
