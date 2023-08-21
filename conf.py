@@ -17,11 +17,16 @@ scoreinitial = 0
 vieoliveinitiale = 5
 
 vitesse = 15
-hauteursaut = 20
+hauteursaut = 3
+entraindesauter = False
 policepardefaut = "ttf/PixeloidSans.ttf"
 taillepolice = 24
 
 couleurtransparente = (234, 21, 227)
+
+fichierssons = [
+    "son/beep3-98810.ogg",
+]
 
 fichiersdecors = [
     "img/Map_niveau1_herbe derriere.png",
@@ -76,3 +81,5 @@ fichiersbriques = ["img/brique 1.png", "img/brique 2.png"]
 fichiersepee = ["img/jv epee.png"]
 
 estchevalier = False
+
+

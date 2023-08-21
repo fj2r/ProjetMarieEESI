@@ -1,6 +1,5 @@
 import pygame as pg
 import pygame.sprite
-from fonctions import *
 from conf import *
 
 
@@ -28,13 +27,31 @@ class Objet(pygame.sprite.Sprite):
         self.rect.h = self.image.get_height()
         self.rect.w = self.image.get_width()
         self.timer = 0
+        self.blip = []
+        for son in fichierssons:
+
+            self.blip.append(pg.mixer.Sound(son))
 
 
 class Epee(Objet):
     def __init__(self, images, indexdefaut):
         Objet.__init__(self, images, indexdefaut)
-        self.rect.left = 600
+        self.rect.left = 2000
         self.rect.bottom = fenetrehauteur - 6
+
+    def scrollinggauche(self):
+        self.rect.move_ip(-vitesse, 0)
+
+    def scrollingdroite(self):
+        self.rect.move_ip(vitesse, 0)
+
+
+class Sol(Objet):
+    def __init__(self, image, indexdefaut):
+        Objet.__init__(self, image, indexdefaut)
+        self.rect.left = 0
+        self.rect.bottom = fenetrehauteur - 12
+        self.rect.h = self.image.get_height() - 88
 
     def scrollinggauche(self):
         self.rect.move_ip(-vitesse, 0)
@@ -51,26 +68,49 @@ class Olive(Objet):
 
     def __init__(self, image, indexdefaut):
         Objet.__init__(self, image, indexdefaut)
-        self.rect.bottom = fenetrehauteur - 6
+        self.rect.top = 0
         self.rect.left = (fenetrelargeur - self.rect.w) // 10
         self.hauteursaut = hauteursaut
+        self.direction = "D"
         self.entraindesauter = False
+        self.entraindetomber = True
         self.iterateur = 0
         self.estchevalier = estchevalier
+        self.framedelai = self.timer
+        self.signe = 1
+
+    def update(
+        self, listesolsprites, listebriquessprites, listeepeesprites, zonescoreetvie
+    ):
+
+        listecollisionsoliveepee = pg.sprite.spritecollide(self, listeepeesprites, True)
+        if listecollisionsoliveepee:
+            self.estchevalier = True
+            self.blip[0].play(0, 0, 0)
+
+            zonescoreetvie.calculScore(20)
+
+
+
+        self.gravite(listesolsprites, listebriquessprites)
+
+        if self.entraindesauter == True :
+            self.sauter(10, listesolsprites)
 
     def deplacerGauche(self, indexdepart, indexarret):
-        self.framedelai = self.timer
+
         if self.framedelai <= 0:
             self.mouvementsAnimations(indexdepart, indexarret)
-        self.timer -= 1
+        # self.timer -= 1
         if self.rect.x < (fenetrelargeur - self.rect.w) // 2:
             self.rect.move_ip(-vitesse, 0)
         if self.rect.x >= (fenetrelargeur - self.rect.w) // 2:
             self.rect.move_ip(0, 0)
+        self.direction = "G"
         return "G"
 
     def deplacerDroite(self, indexdepart, indexarret):
-        self.framedelai = self.timer
+
         if self.framedelai <= 0:
             self.mouvementsAnimations(indexdepart, indexarret)
 
@@ -78,14 +118,13 @@ class Olive(Objet):
             self.rect.move_ip(vitesse, 0)
         if self.rect.x >= (fenetrelargeur - self.rect.w) // 2:
             self.rect.move_ip(0, 0)
-
+        self.direction = "D"
         return "D"
 
     def mouvementsAnimations(self, indexdepart, indexarret):
         self.index = indexdepart + self.iterateur
         self.arretindex = indexarret
 
-        # print(self.index)
         if self.index >= self.arretindex:
             self.iterateur = 0
             self.index = indexdepart
@@ -97,28 +136,73 @@ class Olive(Objet):
 
         self.index += 1
         self.iterateur += 1
-        pg.time.wait(20)
+        # pg.time.wait(20)
 
-    def sauter(self, hauteursaut, indexdepart, indexarret, directionsaut):
+    def sauter(self, hauteursautmax, listesolsprites):
 
-        self.mouvementsAnimations(indexdepart, indexarret)
-        saut = True
-        if self.hauteursaut >= -hauteursaut:
-            self.signe = 1
-        if self.hauteursaut < 0:
-            self.signe = -1
-        self.rect.bottom -= int(self.hauteursaut**2 * 0.1 * self.signe)
-        self.hauteursaut -= 1
-        if self.hauteursaut < -hauteursaut:
-            self.hauteursaut = hauteursaut
+        if self.entraindesauter == True:
+            if self.direction == "D":
+                self.mouvementsAnimations(8, 8)
+            if self.direction == "G":
+                self.mouvementsAnimations(9, 9)
 
-            saut = False
-            if directionsaut == "D":
-                self.mouvementsAnimations(1, 1)
-            if directionsaut == "G":
-                self.mouvementsAnimations(5, 5)
-        print(saut)
-        return saut
+            self.offset = int(self.hauteursaut**2 * 0.2 * self.signe)
+
+            self.hauteursaut -= 1
+            self.rect.y -= self.offset
+
+            print(self.rect.y)
+
+            if self.hauteursaut < 0:
+                self.signe = -self.signe
+
+            if self.hauteursaut <= -hauteursautmax:
+                self.entraindesauter = False
+                self.signe = 1
+                self.hauteursaut = hauteursautmax
+
+    def gravite(self, listesolsprites, listebriquessprites):
+
+        listecollisionsolivesbriques = pg.sprite.spritecollide(
+            self, listebriquessprites, False
+        )
+        listecollisionsolivesol = pg.sprite.spritecollide(self, listesolsprites, False)
+
+        if listecollisionsolivesbriques:
+            if self.entraindesauter == False:
+                for brique in listecollisionsolivesbriques :
+
+                    self.rect.move_ip(0, 0)
+                    if self.direction =='D' :
+                        self.mouvementsAnimations(3, 3)
+                    else :
+                        self.mouvementsAnimations(7, 7)
+
+
+        elif listecollisionsolivesol:
+            if self.entraindesauter == False:
+
+                self.rect.move_ip(0, 0)
+                self.mouvementsAnimations(14,14)
+
+        else :
+            if  self.entraindesauter == False :
+
+                self.rect.move_ip(0, 3)
+
+
+
+class Brique(Objet):
+    def __init__(self, image, indexdefaut):
+        Objet.__init__(self, image, indexdefaut)
+        self.rect.bottom = (fenetrehauteur // 2) + 50
+        self.rect.right = fenetrelargeur
+
+    def scrollinggauche(self):
+        self.rect.move_ip(-vitesse, 0)
+
+    def scrollingdroite(self):
+        self.rect.move_ip(vitesse, 0)
 
 
 class AffichageScoreVies(pygame.font.Font):

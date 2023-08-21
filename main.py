@@ -32,7 +32,7 @@ def main():
     # sur les évènements claviers
     #########################################
     horloge = pg.time.Clock()
-    pg.key.set_repeat(10, 50)
+    pg.key.set_repeat(0, 0)
 
     #########################################
     # init des valeurs de score + vie
@@ -47,7 +47,7 @@ def main():
     #########################################
     # declaration des sons du jeu
     #########################################
-    blip = pg.mixer.Sound("son/beep3-98810.ogg")
+
 
     #########################################
     # declaration des polices du jeu
@@ -56,8 +56,8 @@ def main():
     #########################################
     # Création des surfaces de décors
     #########################################
-    sol = pg.image.load(fichiersdecors[2]).convert_alpha()
-    sol = pg.transform.scale(sol, (sol.get_width() * 2, sol.get_height() * 2))
+    #sol = pg.image.load(fichiersdecors[2]).convert_alpha()
+    #sol = pg.transform.scale(sol, (sol.get_width() * 2, sol.get_height() * 2))
     herbederriere = pg.image.load(fichiersdecors[0]).convert_alpha()
     herbederriere = pg.transform.scale(
         herbederriere, (herbederriere.get_width() * 4, herbederriere.get_height() * 4)
@@ -76,6 +76,8 @@ def main():
     listeoliveitemssprites = pg.sprite.Group()
     listeitemssprites = pg.sprite.Group()
     listeepeesprites = pg.sprite.Group()
+    listebriquessprites = pg.sprite.Group()
+    listesolsprites = pg.sprite.Group()
 
     #########################################
     # instanciation des sprites
@@ -83,25 +85,35 @@ def main():
 
     olivevecteurimagessprites = remplissageVecteur(fichiersolive)
     directionolive = "D"  # direction par défaut
-    olivesaute = False  # par défaut il ne saute pas
+
     oliveestchevalier = estchevalier  # False par défaut
     olive = Olive(olivevecteurimagessprites, 14)
+
+
+    solvecteurimagessprites = remplissageVecteur(fichiersdecors)
+    sol = Sol(solvecteurimagessprites, 2)
 
     epeevecteurimagesprite = remplissageVecteur(fichiersepee)
     epee = Epee(epeevecteurimagesprite, 0)
 
+    briquesvecteurimagessprites = remplissageVecteur(fichiersbriques)
+    brique = Brique(briquesvecteurimagessprites, 0)
     #########################################
     # remplissage des groupes de sprites
     #########################################
-    listeglobalesprites.add(olive)
+    #listeglobalesprites.add(olive)
     listeolivesprite.add(olive)
+    listesolsprites.add(sol)
+    listeglobalesprites.add(sol)
     listeitemssprites.add(epee)
     listeglobalesprites.add(epee)
     listeepeesprites.add(epee)
+    listeglobalesprites.add(brique)
+    listebriquessprites.add(brique)
 
-    #########################################
-    # boucle principale du jeu
-    #########################################
+    #######################################################################################
+    #                               boucle principale du jeu
+    #######################################################################################
     while jeu:
         fenetre.fill(fenetrecouleur)
         # on définit le fps
@@ -131,6 +143,7 @@ def main():
                     else:
                         directionolive = olive.deplacerGauche(19, 20)
                     epee.scrollingdroite()
+                    brique.scrollingdroite()
                     decorx += vitesse
 
                 if event.key == pg.K_RIGHT:
@@ -139,16 +152,16 @@ def main():
                     else:
                         directionolive = olive.deplacerDroite(17, 18)
                     epee.scrollinggauche()
+                    brique.scrollinggauche()
                     decorx -= vitesse
 
-        if olivesaute == False:
-            if keys[pg.K_LCTRL] or keys[pg.K_SPACE]:
-                olivesaute = True
-        elif olivesaute == True:
-            if directionolive == "D":
-                olivesaute = olive.sauter(20, 8, 8, directionolive)
-            elif directionolive == "G":
-                olivesaute = olive.sauter(20, 9, 9, directionolive)
+        if keys[pg.K_LCTRL] or keys[pg.K_SPACE]  :
+
+            if not olive.entraindesauter:
+                olive.entraindesauter = True
+                #olive.sauter( 20,listesolsprites)
+
+
         #########################################
         # niveau 0 - Splash screen
         #########################################
@@ -185,47 +198,23 @@ def main():
             #########################################
             # affichage des décors et éléments de sprites
             #########################################
-            # en fond de décor
-            if decorx <= -fenetrelargeur or decorx >= fenetrelargeur:
-                decorx = 0
+            affichageDecor(fenetre, decorx, herbederriere)
 
-            fenetre.blit(
-                herbederriere,
-                (
-                    decorx - herbederriere.get_width(),
-                    fenetrehauteur - 6 - herbederriere.get_height(),
-                ),
-            )
-            fenetre.blit(
-                herbederriere, (decorx, fenetrehauteur - 6 - herbederriere.get_height())
-            )
-            fenetre.blit(
-                herbederriere,
-                (
-                    decorx + herbederriere.get_width(),
-                    fenetrehauteur - 6 - herbederriere.get_height(),
-                ),
-            )
-
-            fenetre.blit(
-                sol, (decorx - sol.get_width(), fenetrehauteur - sol.get_height() - 10)
-            )
-            fenetre.blit(sol, (decorx, fenetrehauteur - sol.get_height() - 10))
-            fenetre.blit(
-                sol, (decorx + sol.get_width(), fenetrehauteur - sol.get_height() - 10)
-            )
             #########################################
             # Gestion des sprites et tests de collisions
             #########################################
-            listecollisionsoliveepee = pg.sprite.spritecollide(
-                olive, listeepeesprites, True
-            )
+
             listecollisionsoliveitems = pg.sprite.spritecollide(
                 olive, listeitemssprites, False
             )
 
+
+
             # on update tous les sprites et on les affiche
+            listeolivesprite.update(listesolsprites, listebriquessprites, listeepeesprites, zonescoreetvie)
             listeglobalesprites.update()
+
+            listeolivesprite.draw(fenetre)
             listeglobalesprites.draw(fenetre)
 
             # éléments de décor en avant plan
@@ -249,16 +238,13 @@ def main():
             #########################################
             # affichage de la zone de score et de vies
             #########################################
-            if listecollisionsoliveepee:
-                zonescoreetvie.calculScore(20)
+
 
             zonescoreetvie.affichagescore(fenetre)
 
             # Gestion des sons
-            if listecollisionsoliveepee:
-                oliveestchevalier = True
-                blip.play(0, 0, 0)
-            pg.time.delay(10)
+
+            pg.time.delay(50)
             pg.display.flip()
         if level == 2:
             pass
