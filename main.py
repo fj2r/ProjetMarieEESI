@@ -47,8 +47,11 @@ def main():
     #########################################
     # declaration des sons du jeu
     #########################################
-
-
+    listemusiques = []
+    for musique in fichiersmusiques:
+    
+        listemusiques.append(pg.mixer.Sound(musique))
+    listemusiques[5].play(0, 0, 0)
     #########################################
     # declaration des polices du jeu
     #########################################
@@ -138,62 +141,70 @@ def main():
                     pg.quit()
                     sys.exit()
                 if event.key == pg.K_LEFT:
-                    if oliveestchevalier == False:
-                        directionolive = olive.deplacerGauche(4, 7)
+                    if olive.estchevalier == False:
+                        olive.deplacerGauche(4, 7)
                     else:
-                        directionolive = olive.deplacerGauche(19, 20)
+                        olive.deplacerGauche(20, 21)
                     epee.scrollingdroite()
                     brique.scrollingdroite()
                     decorx += vitesse
 
                 if event.key == pg.K_RIGHT:
-                    if oliveestchevalier == False:
-                        directionolive = olive.deplacerDroite(0, 3)
+                    if olive.estchevalier == False:
+                        olive.deplacerDroite(0, 3)
                     else:
-                        directionolive = olive.deplacerDroite(17, 18)
+                        olive.deplacerDroite(17, 18)
                     epee.scrollinggauche()
                     brique.scrollinggauche()
                     decorx -= vitesse
 
-        if keys[pg.K_LCTRL] or keys[pg.K_SPACE]  :
+                if olive.entraindesauter == False :
+                    if event.key == pg.K_LCTRL :
+                        olive.entraindesauter = True
 
-            if not olive.entraindesauter:
-                olive.entraindesauter = True
-                #olive.sauter( 20,listesolsprites)
+
+
 
 
         #########################################
         # niveau 0 - Splash screen
         #########################################
         if level == 0:
+
             fenetre.fill(fenetrecouleur)
+            splash = pg.image.load('img/écran titre final.png').convert_alpha()
+            splash = pg.transform.scale(splash, (fenetrelargeur,fenetrehauteur))
+
             police1 = pg.font.Font(policeurl, taillepolice)
             police2 = pg.font.Font(policeurl, taillepolice)
             splashtexte = police1.render(
-                "Appuyez sur la touche ENTREE pour démarrer !",
+                "Appuyez sur une touche pour commencer !",
                 True,
                 (255, 0, 0),
                 (0, 5, 255),
             )
             splashtexte2 = police2.render(
-                "Appuyez sur la touche ENTREE pour démarrer !",
+                "Appuyez sur une touche pour commencer !",
                 True,
                 (0, 0, 255),
                 (255, 5, 0),
             )
             pg.time.wait(500)
-            fenetre.blit(splashtexte, (10, fenetrehauteur // 2 - taillepolice // 2))
+            fenetre.blit(splash, (0,0))
+            fenetre.blit(splashtexte, (100, fenetrehauteur -50 - taillepolice // 2))
             pg.time.delay(10)
             pg.display.flip()
             pg.time.wait(500)
             fenetre.fill(fenetrecouleur)
-            fenetre.blit(splashtexte2, (10, fenetrehauteur // 2 - taillepolice // 2))
+            fenetre.blit(splash, (0, 0))
+            fenetre.blit(splashtexte2, (100, fenetrehauteur -50 - taillepolice // 2))
             pg.time.delay(10)
             pg.display.flip()
         #########################################
         # niveau 1
         #########################################
         if level == 1:
+            listemusiques[5].stop()
 
             #########################################
             # affichage des décors et éléments de sprites
@@ -211,11 +222,13 @@ def main():
 
 
             # on update tous les sprites et on les affiche
-            listeolivesprite.update(listesolsprites, listebriquessprites, listeepeesprites, zonescoreetvie)
             listeglobalesprites.update()
+            listeolivesprite.update(listesolsprites, listebriquessprites, listeepeesprites, zonescoreetvie)
 
-            listeolivesprite.draw(fenetre)
+
+
             listeglobalesprites.draw(fenetre)
+            listeolivesprite.draw(fenetre)
 
             # éléments de décor en avant plan
             fenetre.blit(
@@ -244,7 +257,7 @@ def main():
 
             # Gestion des sons
 
-            pg.time.delay(50)
+            pg.time.delay(40)
             pg.display.flip()
         if level == 2:
             pass

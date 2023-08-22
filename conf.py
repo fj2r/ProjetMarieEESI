@@ -6,6 +6,8 @@
 #       ver. alpha-0.1
 #
 #################################################################
+import os
+
 
 jeuetatinitial = True
 leveldemarrage = 0
@@ -17,22 +19,29 @@ scoreinitial = 0
 vieoliveinitiale = 5
 
 vitesse = 15
-hauteursaut = 3
+hauteursaut = 12
+gravite = 6
 entraindesauter = False
 policepardefaut = "ttf/PixeloidSans.ttf"
 taillepolice = 24
 
 couleurtransparente = (234, 21, 227)
 
-fichierssons = [
-    "son/beep3-98810.ogg",
-]
+fichierssons = []
+for fichier in os.listdir('son/sfx/ogg/') :
+    fichierssons.append(os.path.join('son/sfx/ogg/',fichier) )
+
+
+fichiersmusiques = []
+for musique in os.listdir('son/musiques/ogg/'):
+    fichiersmusiques.append(os.path.join('son/musiques/ogg/', musique))
 
 fichiersdecors = [
     "img/Map_niveau1_herbe derriere.png",
     "img/Map_niveau1_herbe devant.png",
     "img/Map_niveau1_sol.png",
 ]
+
 
 fichiersolive = [
     "img/olive_D1.png",
@@ -54,10 +63,12 @@ fichiersolive = [
     "img/olive_face.png",
     "img/olive_armure_D1.png",
     "img/olive_armure_D2.png",
+    "img/olive_armure_Dsaut.png",
     "img/olive_armure_G1.png",
     "img/olive_armure_G2.png",
     "img/olive_armure_Dcoup.png",
     "img/olive_armure_Gcoup.png",
+    "img/olive_armure_Gsaut.png"
 ]
 
 fichiersmysteryhuman = [
