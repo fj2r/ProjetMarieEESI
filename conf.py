@@ -7,11 +7,12 @@
 #
 #################################################################
 import os
+from fonctions import *
 
 
 jeuetatinitial = True
 leveldemarrage = 0
-fenetrelargeur, fenetrehauteur = 800, 600
+fenetrelargeur, fenetrehauteur = 960, 660
 fenetretaille = (fenetrelargeur, fenetrehauteur)
 fenetrecouleur = (4, 9, 46)
 
@@ -27,20 +28,17 @@ taillepolice = 24
 
 couleurtransparente = (234, 21, 227)
 
-fichierssons = []
-for fichier in os.listdir('son/sfx/ogg/') :
-    fichierssons.append(os.path.join('son/sfx/ogg/',fichier) )
+#############################################################"
 
 
-fichiersmusiques = []
-for musique in os.listdir('son/musiques/ogg/'):
-    fichiersmusiques.append(os.path.join('son/musiques/ogg/', musique))
+
 
 fichiersdecors = [
     "img/Map_niveau1_herbe derriere.png",
     "img/Map_niveau1_herbe devant.png",
     "img/Map_niveau1_sol.png",
 ]
+
 
 
 fichiersolive = [

@@ -1,5 +1,13 @@
+import os
+
 from conf import *
 
+
+def remplissageImagesSonsJeu (url):
+    vecteur = []
+    for item in os.listdir(url):
+        vecteur.append(os.path.join(url, item))
+    return vecteur
 
 def remplissageVecteur(fichiers):
     vecteur = []
@@ -8,7 +16,7 @@ def remplissageVecteur(fichiers):
     return vecteur
 
 
-def affichageDecor(fenetre, decorx, herbederriere):
+def affichageDecor(fenetre, decorx, herbederriere, fenetrelargeur, fenetrehauteur):
     # en fond de décor
     if decorx <= -fenetrelargeur or decorx >= fenetrelargeur:
         decorx = 0
@@ -31,10 +39,5 @@ def affichageDecor(fenetre, decorx, herbederriere):
         ),
     )
 
-    ''''#fenetre.blit(
-        sol, (decorx - 6, fenetrehauteur - 6 - 10)
-    )
-    #fenetre.blit(sol, (decorx, fenetrehauteur - sol.get_height() - 10))
-    #fenetre.blit(
-        sol, (decorx + 6 , fenetrehauteur - 6) - 10)
-    )'''
+
+fichierssons = remplissageImagesSonsJeu("son/sfx/ogg/")

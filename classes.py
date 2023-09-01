@@ -21,16 +21,17 @@ class Objet(pygame.sprite.Sprite):
         self.image = self.listeimagespouranimation[indexdefaut]
         self.image.set_colorkey(couleurtransparente)
         self.image = pg.transform.scale2x(
-            self.image
+             self.image
         )
         self.rect = self.image.get_rect()
         self.rect.h = self.image.get_height()
         self.rect.w = self.image.get_width()
         self.timer = 0
-        self.blip = []
-        for son in fichierssons:
+        self.cstgravitaire = gravite
+        self.listesfx = []
+        for sfx in fichierssons:
+            self.listesfx.append(pg.mixer.Sound(sfx))
 
-            self.blip.append(pg.mixer.Sound(son))
 
 
 class Olive(Objet):
@@ -41,18 +42,22 @@ class Olive(Objet):
 
     def __init__(self, image, indexdefaut):
         Objet.__init__(self, image, indexdefaut)
-        self.rect.y = 500
-
+        self.rect.y = 300
+        self.offset = 0
         self.rect.left = (fenetrelargeur - self.rect.w) // 10
         self.hauteursaut = hauteursaut
         self.direction = "D"
         self.entraindesauter = False
         self.entraindetomber = False
+        self.sautinterrompu = False
         self.iterateur = 0
         self.estchevalier = estchevalier
         self.framedelai = self.timer
         self.signe = 1
         self.cstgravitaire = gravite
+
+    def gravite(self, gravite):
+        self.rect.y += gravite
 
     def update(
         self, listesolsprites, listebriquessprites, listeepeesprites, zonescoreetvie
@@ -73,9 +78,10 @@ class Olive(Objet):
             for brique in listecollisionsolivesbriques:
 
                 self.rect.bottom = brique.rect.y+0
+                self.sautinterrompu = True
+
             self.cstgravitaire = 0
-            #self.entraindesauter = False
-            # self.entraindetomber = False
+
         else :
             self.cstgravitaire = gravite
 
@@ -100,8 +106,7 @@ class Olive(Objet):
         if listecollisionsoliveepee:
             print("voila il a l'épée !")
             self.estchevalier = True
-            self.blip[0].play(0, 0, 0)
-
+            self.listesfx[0].play(0, 0, 0)
             zonescoreetvie.calculScore(20)
 
     def deplacerGauche(self, indexdepart, indexarret):
@@ -177,10 +182,21 @@ class Olive(Objet):
                 self.signe = 1
                 self.hauteursaut = hauteursautmax
 
-    def gravite(self, gravite):
-        self.rect.y += gravite
+        if self.sautinterrompu == True and self.entraindetomber == True :
+            self.entraindesauter = False
+            self.entraindetomber = False
+            self.offset = 0
+            self.signe = 1
+            self.hauteursaut = hauteursautmax
 
 
+
+class Mysteryhuman(Objet):
+    def __init__(self, image, indexdefaut):
+        Objet.__init__(self , image, indexdefaut)
+        self.rect.x, self.rect.y = 2000, 400
+        self.vies = 1
+        self.dommages = 1
 
 
 class Epee(Objet):

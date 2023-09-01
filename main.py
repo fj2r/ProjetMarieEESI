@@ -7,11 +7,9 @@
 #
 #################################################################
 import sys
-
 from classes import *
 from conf import *
 from fonctions import *
-
 
 def main():
     pg.init()  # initialisation des modules
@@ -45,13 +43,22 @@ def main():
     )
 
     #########################################
-    # declaration des sons du jeu
+    # chargement des sons et musiques du jeu
     #########################################
+
+    fichiersmusiques = remplissageImagesSonsJeu("son/musiques/ogg/")
+
+
+
+
+
     listemusiques = []
+    print(fichiersmusiques)
     for musique in fichiersmusiques:
-    
         listemusiques.append(pg.mixer.Sound(musique))
-    listemusiques[5].play(0, 0, 0)
+
+
+
     #########################################
     # declaration des polices du jeu
     #########################################
@@ -61,16 +68,30 @@ def main():
     #########################################
     #sol = pg.image.load(fichiersdecors[2]).convert_alpha()
     #sol = pg.transform.scale(sol, (sol.get_width() * 2, sol.get_height() * 2))
+    mapmystere = pg.image.load('img/map_mystère.png').convert_alpha()
+    mapmystere = pg.transform.scale(mapmystere, (133*6,3057*6))
+    mapx = 0
+    mapy = 0
+
     herbederriere = pg.image.load(fichiersdecors[0]).convert_alpha()
-    herbederriere = pg.transform.scale(
-        herbederriere, (herbederriere.get_width() * 4, herbederriere.get_height() * 4)
+    herbederriere = pg.transform.scale2x(
+        herbederriere
     )
     herbedevant = pg.image.load(fichiersdecors[1]).convert_alpha()
-    herbedevant = pg.transform.scale(
-        herbedevant, (herbedevant.get_width() * 2, herbedevant.get_height() * 2)
+    herbedevant = pg.transform.scale2x(
+        herbedevant
     )
     decorx = 0
     decory = 0
+    #########################################
+    # Vecteurs des images du jeu pour les sprites
+    #########################################
+    phylacteres = remplissageImagesSonsJeu("img/bulles/")
+    items = remplissageImagesSonsJeu("img/items/")
+    fichiersmapsecrete = remplissageImagesSonsJeu("img/map_secrète/")
+    olivedeplacements = remplissageImagesSonsJeu("img/olive deplacements/")
+    olivechevalier = remplissageImagesSonsJeu("img/olive_deplacemnts_armure/")
+
     #########################################
     # création des groupes de sprites
     #########################################
@@ -88,10 +109,7 @@ def main():
 
     olivevecteurimagessprites = remplissageVecteur(fichiersolive)
     directionolive = "D"  # direction par défaut
-
-    oliveestchevalier = estchevalier  # False par défaut
     olive = Olive(olivevecteurimagessprites, 14)
-
 
     solvecteurimagessprites = remplissageVecteur(fichiersdecors)
     sol = Sol(solvecteurimagessprites, 2)
@@ -114,6 +132,12 @@ def main():
     listeglobalesprites.add(brique)
     listebriquessprites.add(brique)
 
+
+    #########################################
+    # démarrage de la musique de début après un delay
+    #########################################
+    pg.time.wait(500)
+    listemusiques[5].play(0, 0, 500)  # pour écran d'accueil
     #######################################################################################
     #                               boucle principale du jeu
     #######################################################################################
@@ -148,6 +172,7 @@ def main():
                     epee.scrollingdroite()
                     brique.scrollingdroite()
                     decorx += vitesse
+                    mapx += vitesse/2
 
                 if event.key == pg.K_RIGHT:
                     if olive.estchevalier == False:
@@ -157,6 +182,7 @@ def main():
                     epee.scrollinggauche()
                     brique.scrollinggauche()
                     decorx -= vitesse
+                    mapx -= vitesse/2
 
                 if olive.entraindesauter == False :
                     if event.key == pg.K_LCTRL :
@@ -209,7 +235,14 @@ def main():
             #########################################
             # affichage des décors et éléments de sprites
             #########################################
-            affichageDecor(fenetre, decorx, herbederriere)
+            fenetre.blit(
+                mapmystere,
+                (
+                    mapx,
+                    mapy
+                ),
+            )
+            affichageDecor(fenetre, decorx, herbederriere, fenetrelargeur, fenetrehauteur)
 
             #########################################
             # Gestion des sprites et tests de collisions
