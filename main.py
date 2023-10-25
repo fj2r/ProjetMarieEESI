@@ -2,7 +2,7 @@
 #
 #       Jeu en Pygame pour projet EESI
 #       Graphics by Marie
-#       Coding by Fred - python ver. 3.8.5
+#       Coding by Fred - python ver. 3.8.5 - pygame ver.
 #       ver. alpha-0.5
 #
 #################################################################
@@ -16,11 +16,12 @@ def main():
     pg.init()  # initialisation des modules
     pg.mixer.init()  # initialisation du mixer son
     pg.font.init()  # initialisation des modules de police
+    FPS = 60
 
-    jeu = jeuetatinitial
-    level = leveldemarrage
+    jeu = jeuetatinitial #état du jeu
+    level = leveldemarrage # level de démarrage
     #########################################
-    # définition de la fenetre principale du jeu
+    # construction de la fenetre principale du jeu
     #########################################
     fenetre = pg.display.set_mode(fenetretaille)
     fenetre.fill(fenetrecouleur)
@@ -31,6 +32,8 @@ def main():
     # sur les évènements claviers
     #########################################
     horloge = pg.time.Clock()
+    current_timer = 0
+    animation_timer = timer
     pg.key.set_repeat(0, 0)
 
     #########################################
@@ -143,7 +146,8 @@ def main():
     while jeu:
         fenetre.fill(fenetrecouleur)
         # on définit le fps
-        horloge.tick(60)
+
+        dt = horloge.tick(FPS)/1000
         pg.key.set_repeat(50, 0)
         keys = pg.key.get_pressed()
 
@@ -198,6 +202,7 @@ def main():
 ############################################################################
         if level == 1:
             listemusiques[5].stop()
+            current_timer += dt
 
             #########################################
             # Gestion des évènements clavier - level 1
@@ -207,6 +212,8 @@ def main():
                     jeu = False
                     pg.quit()
                     sys.exit()
+                if event.type == pg.KEYUP:
+                    olive.index = 0 #remise à 0 des index des frames pour les vecteurs d'animations
                 if event.type == pg.KEYDOWN:
 
                     if event.key == pg.K_ESCAPE:
@@ -214,30 +221,36 @@ def main():
                         pg.quit()
                         sys.exit()
                     if event.key == pg.K_LEFT:
-                        if olive.estchevalier == False:
-                            olive.deplacerGauche([1,2,3,2,1])
-                        else:
-                            olive.deplacerGauche([16,17,16])
-                        epee.scrollingdroite()
-                        brique.scrollingdroite()
-                        decorx += vitesse
-                        mapx += vitesse/2
+                        if current_timer >= animation_timer :
+                            if olive.estchevalier == False:
+                                olive.deplacerGauche([1,2,3,2,1])
+                            else:
+                                olive.deplacerGauche([16,17,16])
+                            epee.scrollingdroite()
+                            brique.scrollingdroite()
+                            decorx += vitesse
+                            mapx += vitesse/2
+                            current_timer=0
 
                     if event.key == pg.K_RIGHT:
-                        if olive.estchevalier == False:
-                            listeframes = ([1,2,3,2,1])
-                            olive.deplacerDroite(listeframes)
-                        else:
-                            listeframes = ([16,17,16])
-                            olive.deplacerDroite(listeframes)
-                        epee.scrollinggauche()
-                        brique.scrollinggauche()
-                        decorx -= vitesse
-                        mapx -= vitesse/2
+                        if current_timer >= animation_timer :
+                            if olive.estchevalier == False:
+                                listeframes = ([1,2,3,2,1])
+                                olive.deplacerDroite(listeframes)
+                            else:
+                                listeframes = ([16,17,16])
+                                olive.deplacerDroite(listeframes)
+                            epee.scrollinggauche()
+                            brique.scrollinggauche()
+                            decorx -= vitesse
+                            mapx -= vitesse/2
+                            current_timer=0
 
                     if olive.entraindesauter == False :
                         if event.key == pg.K_LCTRL :
+
                             olive.entraindesauter = True
+
 
 
 

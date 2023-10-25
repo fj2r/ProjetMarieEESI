@@ -73,6 +73,10 @@ class Olive(Objet):
         self.signe = 1
         self.cstgravitaire = gravite
         self.index = 0
+        self.animation_timer = 0.1
+        self.current_frame = 0
+        self.framesautolive = [4]
+        self.framesautchevalier = [20]
 
     def gravite(self, gravite):
         self.rect.y += gravite
@@ -111,7 +115,10 @@ class Olive(Objet):
             self.cstgravitaire = gravite
 
         if self.entraindesauter == True:
-            self.sauter(hauteursaut)
+            if self.estchevalier == False :
+                self.sauter(hauteursaut, self.framesautolive)
+            else :
+                self.sauter(hauteursaut, self.framesautchevalier)
 
         self.gravite(self.cstgravitaire)
         #print(self.cstgravitaire)
@@ -153,27 +160,21 @@ class Olive(Objet):
     def mouvementsAnimations(self, i):
 
         self.image = self.listeimagespouranimation[i]
-        """self.image.set_colorkey(couleurtransparente)
-        self.image = pg.transform.scale2x(self.image)"""
+
         pg.time.wait(0)
     def mouvementsAnimationsFlip_x(self, i):
         self.image = self.listeimageflip_x[i]
-        """self.image.set_colorkey(couleurtransparente)
-        self.image = pg.transform.scale2x(self.image)"""
+
         pg.time.wait(0)
-    def sauter(self, hauteursautmax):
+    def sauter(self, hauteursautmax, listeframes):
 
         if self.entraindesauter == True:
             if self.direction == "D":
-                if self.estchevalier == False:
-                    self.mouvementsAnimations(8, 8)
-                else:
-                    self.mouvementsAnimations(19, 19)
+                self.mouvementsAnimations(listeframes[0])
+
             if self.direction == "G":
-                if self.estchevalier == False:
-                    self.mouvementsAnimations(9, 9)
-                else:
-                    self.mouvementsAnimations(24, 24)
+
+                self.mouvementsAnimationsFlip_x(listeframes[0])
 
             self.offset = int(self.hauteursaut**2 * (1 / 2) * self.signe)
 

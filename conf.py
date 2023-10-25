@@ -17,6 +17,7 @@ fenetrecouleur = (4, 9, 46)
 scoreinitial = 0
 vieoliveinitiale = 5
 estchevalier = False
+timer = 0.05
 
 vitesse = 10
 hauteursaut = 12
