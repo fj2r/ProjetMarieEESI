@@ -16,28 +16,23 @@ def remplissageVecteur(fichiers):
     return vecteur
 
 
-def affichageDecor(fenetre, decorx, herbederriere, fenetrelargeur, fenetrehauteur):
-    # en fond de décor
-    if decorx <= -fenetrelargeur or decorx >= fenetrelargeur:
-        decorx = 0
-
-    fenetre.blit(
-        herbederriere,
+def affichageDecor(fenetre, decorx, itemdecor, fenetrelargeur, fenetrehauteur):
+    # positionnement des éléments de décor
+    """fenetre.blit(
+        itemdecor,
         (
-            decorx - herbederriere.get_width(),
-            fenetrehauteur - 6 - herbederriere.get_height(),
+            decorx - itemdecor.get_width(),
+            fenetrehauteur - 6 - itemdecor.get_height(),
         ),
-    )
-    fenetre.blit(
-        herbederriere, (decorx, fenetrehauteur - 6 - herbederriere.get_height())
-    )
-    fenetre.blit(
-        herbederriere,
+    )"""
+    fenetre.blit(itemdecor, (decorx, fenetrehauteur - 6 - itemdecor.get_height()))
+    """fenetre.blit(
+        itemdecor,
         (
-            decorx + herbederriere.get_width(),
-            fenetrehauteur - 6 - herbederriere.get_height(),
+            decorx + itemdecor.get_width(),
+            fenetrehauteur - 6 - itemdecor.get_height(),
         ),
-    )
+    )"""
 
 
-fichierssons = remplissageImagesSonsJeu("son/sfx/ogg/")
+

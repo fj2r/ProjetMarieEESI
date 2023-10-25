@@ -3,10 +3,11 @@
 #       Jeu en Pygame pour projet EESI
 #       Graphics by Marie
 #       Coding by Fred - python ver. 3.8.5
-#       ver. alpha-0.4
+#       ver. alpha-0.5
 #
 #################################################################
-import sys
+import sys, time
+import pygame as pg
 from classes import *
 from conf import *
 from fonctions import *
@@ -23,7 +24,7 @@ def main():
     #########################################
     fenetre = pg.display.set_mode(fenetretaille)
     fenetre.fill(fenetrecouleur)
-    pg.display.set_caption("Olive et le MysteryMan")
+    pg.display.set_caption("Olive et le MysteryHuMan")
 
     #########################################
     # gestion du temps et des délais des listeners
@@ -47,17 +48,10 @@ def main():
     #########################################
 
     fichiersmusiques = remplissageImagesSonsJeu("son/musiques/ogg/")
-
-
-
-
-
     listemusiques = []
-    print(fichiersmusiques)
+
     for musique in fichiersmusiques:
         listemusiques.append(pg.mixer.Sound(musique))
-
-
 
     #########################################
     # declaration des polices du jeu
@@ -97,6 +91,7 @@ def main():
     #########################################
     listeglobalesprites = pg.sprite.Group()
     listeolivesprite = pg.sprite.Group()
+    listebullessprite = pg.sprite.Group()
     listeoliveitemssprites = pg.sprite.Group()
     listeitemssprites = pg.sprite.Group()
     listeepeesprites = pg.sprite.Group()
@@ -107,9 +102,12 @@ def main():
     # instanciation des sprites
     #########################################
 
-    olivevecteurimagessprites = remplissageVecteur(fichiersolive)
+    olivevecteurimagessprites = remplissageVecteur(fichiersoliveconcatenee)
     directionolive = "D"  # direction par défaut
     olive = Olive(olivevecteurimagessprites, 14)
+
+    bullesvecteurimagessprite = remplissageVecteur(fichiersbulles)
+    bulle = Phylactere(bullesvecteurimagessprite, 0)
 
     solvecteurimagessprites = remplissageVecteur(fichiersdecors)
     sol = Sol(solvecteurimagessprites, 2)
@@ -124,6 +122,8 @@ def main():
     #########################################
     #listeglobalesprites.add(olive)
     listeolivesprite.add(olive)
+    listebullessprite.add(bulle)
+    listeglobalesprites.add(bulle)
     listesolsprites.add(sol)
     listeglobalesprites.add(sol)
     listeitemssprites.add(epee)
@@ -131,7 +131,6 @@ def main():
     listeepeesprites.add(epee)
     listeglobalesprites.add(brique)
     listebriquessprites.add(brique)
-
 
     #########################################
     # démarrage de la musique de début après un delay
@@ -149,53 +148,21 @@ def main():
         keys = pg.key.get_pressed()
 
         #########################################
-        # Gestion des évènements clavier
+        # Gestion des évènements clavier - jeu entier
         #########################################
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                jeu = False
-                pg.quit()
-                sys.exit()
-
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_RETURN or pg.K_KP_ENTER:
-                    level = 1
-                if event.key == pg.K_ESCAPE:
-                    jeu = False
-                    pg.quit()
-                    sys.exit()
-                if event.key == pg.K_LEFT:
-                    if olive.estchevalier == False:
-                        olive.deplacerGauche(4, 7)
-                    else:
-                        olive.deplacerGauche(20, 21)
-                    epee.scrollingdroite()
-                    brique.scrollingdroite()
-                    decorx += vitesse
-                    mapx += vitesse/2
-
-                if event.key == pg.K_RIGHT:
-                    if olive.estchevalier == False:
-                        olive.deplacerDroite(0, 3)
-                    else:
-                        olive.deplacerDroite(17, 18)
-                    epee.scrollinggauche()
-                    brique.scrollinggauche()
-                    decorx -= vitesse
-                    mapx -= vitesse/2
-
-                if olive.entraindesauter == False :
-                    if event.key == pg.K_LCTRL :
-                        olive.entraindesauter = True
-
-
-
 
 
         #########################################
         # niveau 0 - Splash screen
         #########################################
         if level == 0:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    jeu = False
+                    pg.quit()
+                    sys.exit()
+                if event.type == pg.KEYDOWN:
+                    level = 1
 
             fenetre.fill(fenetrecouleur)
             splash = pg.image.load('img/écran titre final.png').convert_alpha()
@@ -226,11 +193,147 @@ def main():
             fenetre.blit(splashtexte2, (100, fenetrehauteur -50 - taillepolice // 2))
             pg.time.delay(10)
             pg.display.flip()
-        #########################################
-        # niveau 1
-        #########################################
+############################################################################
+#                 ** niveau 1 **
+############################################################################
         if level == 1:
             listemusiques[5].stop()
+
+            #########################################
+            # Gestion des évènements clavier - level 1
+            #########################################
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    jeu = False
+                    pg.quit()
+                    sys.exit()
+                if event.type == pg.KEYDOWN:
+
+                    if event.key == pg.K_ESCAPE:
+                        jeu = False
+                        pg.quit()
+                        sys.exit()
+                    if event.key == pg.K_LEFT:
+                        if olive.estchevalier == False:
+                            olive.deplacerGauche([1,2,3,2,1])
+                        else:
+                            olive.deplacerGauche([16,17,16])
+                        epee.scrollingdroite()
+                        brique.scrollingdroite()
+                        decorx += vitesse
+                        mapx += vitesse/2
+
+                    if event.key == pg.K_RIGHT:
+                        if olive.estchevalier == False:
+                            listeframes = ([1,2,3,2,1])
+                            olive.deplacerDroite(listeframes)
+                        else:
+                            listeframes = ([16,17,16])
+                            olive.deplacerDroite(listeframes)
+                        epee.scrollinggauche()
+                        brique.scrollinggauche()
+                        decorx -= vitesse
+                        mapx -= vitesse/2
+
+                    if olive.entraindesauter == False :
+                        if event.key == pg.K_LCTRL :
+                            olive.entraindesauter = True
+
+
+
+            #########################################
+            # affichage des décors et éléments de sprites
+            #########################################
+            fenetre.blit(
+                mapmystere,
+                (
+                    mapx,
+                    mapy
+                ),
+            )
+            affichageDecor(fenetre, decorx+herbederriere.get_width(), herbederriere, fenetrelargeur, fenetrehauteur)
+            affichageDecor(fenetre, decorx, herbederriere, fenetrelargeur, fenetrehauteur)
+            affichageDecor(fenetre, decorx-herbederriere.get_width(), herbederriere, fenetrelargeur, fenetrehauteur)
+
+            #########################################
+            # Gestion des sprites et tests de collisions
+            #########################################
+
+            listecollisionsoliveitems = pg.sprite.spritecollide(
+                olive, listeitemssprites, False
+            )
+
+
+
+            # on update tous les sprites et on les affiche
+            listeglobalesprites.update()
+            listeolivesprite.update(listesolsprites, listebriquessprites, listeepeesprites, zonescoreetvie)
+
+
+
+            listeglobalesprites.draw(fenetre)
+            listeolivesprite.draw(fenetre)
+
+            # éléments de décor en avant plan
+
+            affichageDecor(fenetre, decorx-herbedevant.get_width(), herbedevant, fenetrelargeur, fenetrehauteur+6)
+            affichageDecor(fenetre, decorx, herbedevant, fenetrelargeur, fenetrehauteur+6)
+            affichageDecor(fenetre, decorx+herbedevant.get_width(), herbedevant, fenetrelargeur, fenetrehauteur+6)
+
+            if decorx >= fenetrelargeur or decorx <= -fenetrelargeur : # pour redessiner les décors à l'infini lors des déplacements
+                decorx = 0
+            #########################################
+            # affichage de la zone de score et de vies
+            #########################################
+
+
+            zonescoreetvie.affichagescore(fenetre)
+
+            # Gestion des sons
+
+            pg.time.delay(40)
+            pg.display.flip()
+#############################################################################
+#                 ** Niveau 2 **
+#############################################################################
+        if level == 2:
+            listemusiques[5].stop()
+
+            #########################################
+            # Gestion des évènements clavier - level 2
+            #########################################
+            for event in pg.event.get():
+                if event.type == pg.KEYDOWN:
+
+                    if event.key == pg.K_ESCAPE:
+                        jeu = False
+                        pg.quit()
+                        sys.exit()
+                    if event.key == pg.K_LEFT:
+                        if olive.estchevalier == False:
+                            olive.deplacerGauche(5, 7)
+                        else:
+                            olive.deplacerGauche(0, 21)
+                        epee.scrollingdroite()
+                        brique.scrollingdroite()
+                        decorx += vitesse
+                        mapx += vitesse/2
+
+                    if event.key == pg.K_RIGHT:
+                        if olive.estchevalier == False:
+                            olive.deplacerDroite(1, 3)
+                        else:
+                            olive.deplacerDroite(5, 7)
+                        epee.scrollinggauche()
+                        brique.scrollinggauche()
+                        decorx -= vitesse
+                        mapx -= vitesse/2
+
+                    if olive.entraindesauter == False :
+                        if event.key == pg.K_LCTRL :
+                            olive.entraindesauter = True
+
+
 
             #########################################
             # affichage des décors et éléments de sprites
@@ -292,8 +395,6 @@ def main():
 
             pg.time.delay(40)
             pg.display.flip()
-        if level == 2:
-            pass
         if level == 3:
             pass
 

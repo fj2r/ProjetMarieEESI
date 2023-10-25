@@ -6,9 +6,7 @@
 #       ver. alpha-0.1
 #
 #################################################################
-import os
 from fonctions import *
-
 
 jeuetatinitial = True
 leveldemarrage = 0
@@ -18,8 +16,9 @@ fenetrecouleur = (4, 9, 46)
 
 scoreinitial = 0
 vieoliveinitiale = 5
+estchevalier = False
 
-vitesse = 15
+vitesse = 10
 hauteursaut = 12
 gravite = 6
 entraindesauter = False
@@ -28,67 +27,40 @@ taillepolice = 24
 
 couleurtransparente = (234, 21, 227)
 
-#############################################################"
+#############################################################
+# Sons du jeu
+#############################################################
+fichierssons = remplissageImagesSonsJeu("son/sfx/ogg/")
 
-
-
-
+#############################################################
+# éléments de design des décors
+#############################################################
 fichiersdecors = [
     "img/Map_niveau1_herbe derriere.png",
     "img/Map_niveau1_herbe devant.png",
     "img/Map_niveau1_sol.png",
 ]
+fichiersmapsecrete = remplissageImagesSonsJeu("img/map_secrète/")
+fichiersbriques = ["img/items/brique 1.png", "img/items/brique 2.png"]
+#############################################################
+# éléments de design des items
+#############################################################
+fichiersitems = remplissageImagesSonsJeu("img/items/")
+
+fichiersepee = ["img/items/jv epee.png"]
+#############################################################
+# éléments de design des personnages
+#############################################################
+fichiersbulles = remplissageImagesSonsJeu("img/bulles/")
 
 
+fichiersolive = remplissageImagesSonsJeu("img/olive deplacements/")
+fichiersolivechevalier = remplissageImagesSonsJeu('img/olive_deplacemnts_armure/')
+fichiersoliveconcatenee = fichiersolive + fichiersolivechevalier
 
-fichiersolive = [
-    "img/olive_D1.png",
-    "img/olive_D2.png",
-    "img/olive_D3.png",
-    "img/olive_D2.png",
-    "img/olive_G1.png",
-    "img/olive_G2.png",
-    "img/olive_G3.png",
-    "img/olive_G2.png",
-    "img/olive_Dsaut.png",
-    "img/olive_Gsaut.png",
-    "img/olive_marche arriere1.png",
-    "img/olive_marche arriere2.png",
-    "img/olive_marche arriere3.png",
-    "img/olive_marche avant1.png",
-    "img/olive_marche avant2.png",
-    "img/olive_marche avant3.png",
-    "img/olive_face.png",
-    "img/olive_armure_D1.png",
-    "img/olive_armure_D2.png",
-    "img/olive_armure_Dsaut.png",
-    "img/olive_armure_G1.png",
-    "img/olive_armure_G2.png",
-    "img/olive_armure_Dcoup.png",
-    "img/olive_armure_Gcoup.png",
-    "img/olive_armure_Gsaut.png"
-]
+fichiersmysteryhuman = remplissageImagesSonsJeu("img/perso mystère/")
+fichiersmysteryhumancombat = remplissageImagesSonsJeu('img/mystery_human_combat/')
 
-fichiersmysteryhuman = [
-    "img/MH_1.png",
-    "img/MH_2.png",
-    "img/MH_3.png",
-    "img/MH_anim_bouche ouverte_1.png",
-    "img/MH_anim_bouche ouverte_2.png",
-    "img/MH_anim_bouche ouverte_3.png",
-    "img/MH_anim_bouche ouverte_4.png",
-    "img/MH_anim_bouche ouverte_5.png",
-    "img/MH_anim_bouche ouverte_6.png",
-    "img/MH_anim_bouche ouverte_7.png",
-    "img/MH_anim_bouche ouverte_8.png",
-    "img/MH_anim_bouche ouverte_9.png",
-    "img/MH_anim_bouche ouverte_10.png",
-    "img/MH_anim_bouche ouverte_11.png",
-    "img/MH_Face.png",
-]
-fichiersbriques = ["img/brique 1.png", "img/brique 2.png"]
-fichiersepee = ["img/jv epee.png"]
 
-estchevalier = False
 
 

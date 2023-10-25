@@ -1,5 +1,6 @@
 import pygame as pg
 import pygame.sprite
+
 from conf import *
 
 
@@ -12,17 +13,22 @@ class Objet(pygame.sprite.Sprite):
     def __init__(self, image, indexdefaut):
         pygame.sprite.Sprite.__init__(self)
         self.listeimagespouranimation = []
+        self.listeimageflip_x = []
         self.index = 0
         for element in image:
+            img = pygame.image.load(element).convert_alpha()
+            img.set_colorkey(couleurtransparente)
+            img = pg.transform.scale2x(img)
             self.listeimagespouranimation.append(
-                pygame.image.load(element).convert_alpha()
+                img
             )
+            self.listeimageflip_x.append(pg.transform.flip(img, True, False))
 
         self.image = self.listeimagespouranimation[indexdefaut]
-        self.image.set_colorkey(couleurtransparente)
-        self.image = pg.transform.scale2x(
-             self.image
-        )
+        """self.image.set_colorkey(couleurtransparente)
+        self.image = pg.transform.scale2x(self.image)"""
+
+
         self.rect = self.image.get_rect()
         self.rect.h = self.image.get_height()
         self.rect.w = self.image.get_width()
@@ -32,6 +38,17 @@ class Objet(pygame.sprite.Sprite):
         for sfx in fichierssons:
             self.listesfx.append(pg.mixer.Sound(sfx))
 
+
+class Phylactere(Objet):
+    """
+    : type Objet -> bulle de dialogue des perso
+    """
+
+    def __init__(self, image, indexdefaut):
+        Objet.__init__(self, image, indexdefaut)
+        self.rect.y = 0
+        self.rect.x = 0
+        self.rect.size = (300, 300)
 
 
 class Olive(Objet):
@@ -55,6 +72,7 @@ class Olive(Objet):
         self.framedelai = self.timer
         self.signe = 1
         self.cstgravitaire = gravite
+        self.index = 0
 
     def gravite(self, gravite):
         self.rect.y += gravite
@@ -66,42 +84,37 @@ class Olive(Objet):
         listecollisionsolivesbriques = pg.sprite.spritecollide(
             self, listebriquessprites, False
         )
-        listecollisionsoliveepee = pg.sprite.spritecollide(
-            self, listeepeesprites, True
-        )
-        listecollisionsolivesol = pg.sprite.spritecollide(
-            self, listesolsprites, False
-        )
+        listecollisionsoliveepee = pg.sprite.spritecollide(self, listeepeesprites, True)
+        listecollisionsolivesol = pg.sprite.spritecollide(self, listesolsprites, False)
         ##################################################"
         if listecollisionsolivesbriques:
-            print("collision brique")
+            #print("collision brique")
             for brique in listecollisionsolivesbriques:
 
-                self.rect.bottom = brique.rect.y+0
+                self.rect.bottom = brique.rect.y + 0
                 self.sautinterrompu = True
 
             self.cstgravitaire = 0
 
-        else :
+        else:
             self.cstgravitaire = gravite
 
         if listecollisionsolivesol:
-            print("collision sol")
+            #print("collision sol")
             for sol in listecollisionsolivesol:
-                self.rect.bottom = sol.rect.y+1
+                self.rect.bottom = sol.rect.y + 1
 
             self.cstgravitaire = 0
-            #self.entraindesauter = False
+            # self.entraindesauter = False
             # self.entraindetomber = False
-        else :
+        else:
             self.cstgravitaire = gravite
 
         if self.entraindesauter == True:
             self.sauter(hauteursaut)
 
         self.gravite(self.cstgravitaire)
-        print(self.cstgravitaire)
-
+        #print(self.cstgravitaire)
 
         if listecollisionsoliveepee:
             print("voila il a l'épée !")
@@ -109,11 +122,14 @@ class Olive(Objet):
             self.listesfx[0].play(0, 0, 0)
             zonescoreetvie.calculScore(20)
 
-    def deplacerGauche(self, indexdepart, indexarret):
+    def deplacerGauche(self, listeframes):
 
-        if self.framedelai <= 0:
-            self.mouvementsAnimations(indexdepart, indexarret)
-        # self.timer -= 1
+        self.mouvementsAnimationsFlip_x(listeframes[self.index])
+        self.index += 1
+        self.index = self.index % len(listeframes)
+
+        if self.rect.x == 0:
+            self.rect.move_ip(0, 0)
         if self.rect.x < (fenetrelargeur - self.rect.w) // 2:
             self.rect.move_ip(-vitesse, 0)
         if self.rect.x >= (fenetrelargeur - self.rect.w) // 2:
@@ -121,10 +137,11 @@ class Olive(Objet):
         self.direction = "G"
         return "G"
 
-    def deplacerDroite(self, indexdepart, indexarret):
+    def deplacerDroite(self, listeframes):
 
-        if self.framedelai <= 0:
-            self.mouvementsAnimations(indexdepart, indexarret)
+        self.mouvementsAnimations(listeframes[self.index])
+        self.index +=1
+        self.index = self.index % len(listeframes)
 
         if self.rect.x < (fenetrelargeur - self.rect.w) // 2:
             self.rect.move_ip(vitesse, 0)
@@ -133,40 +150,32 @@ class Olive(Objet):
         self.direction = "D"
         return "D"
 
-    def mouvementsAnimations(self, indexdepart, indexarret):
-        self.index = indexdepart + self.iterateur
-        self.arretindex = indexarret
+    def mouvementsAnimations(self, i):
 
-        if self.index >= self.arretindex:
-            self.iterateur = 0
-            self.index = indexdepart
-        self.image = self.listeimagespouranimation[self.index]
-        self.image.set_colorkey(couleurtransparente)
-        self.image = pg.transform.scale2x(
-            self.image
-        )
-
-        self.index += 1
-        self.iterateur += 1
-        # pg.time.wait(20)
-
+        self.image = self.listeimagespouranimation[i]
+        """self.image.set_colorkey(couleurtransparente)
+        self.image = pg.transform.scale2x(self.image)"""
+        pg.time.wait(0)
+    def mouvementsAnimationsFlip_x(self, i):
+        self.image = self.listeimageflip_x[i]
+        """self.image.set_colorkey(couleurtransparente)
+        self.image = pg.transform.scale2x(self.image)"""
+        pg.time.wait(0)
     def sauter(self, hauteursautmax):
 
         if self.entraindesauter == True:
             if self.direction == "D":
-                if self.estchevalier == False :
+                if self.estchevalier == False:
                     self.mouvementsAnimations(8, 8)
-                else :
+                else:
                     self.mouvementsAnimations(19, 19)
             if self.direction == "G":
-                if self.estchevalier == False :
+                if self.estchevalier == False:
                     self.mouvementsAnimations(9, 9)
-                else :
+                else:
                     self.mouvementsAnimations(24, 24)
 
-
-            self.offset = int(self.hauteursaut**2 * (1/2) * self.signe)
-
+            self.offset = int(self.hauteursaut**2 * (1 / 2) * self.signe)
 
             self.rect.y -= self.offset
             self.hauteursaut -= 1
@@ -175,14 +184,14 @@ class Olive(Objet):
                 self.signe = -1
                 self.entraindetomber = True
 
-            if self.hauteursaut == -hauteursautmax-1:
+            if self.hauteursaut == -hauteursautmax - 1:
 
                 self.entraindesauter = False
                 self.entraindetomber = False
                 self.signe = 1
                 self.hauteursaut = hauteursautmax
 
-        if self.sautinterrompu == True and self.entraindetomber == True :
+        if self.sautinterrompu == True and self.entraindetomber == True:
             self.entraindesauter = False
             self.entraindetomber = False
             self.offset = 0
@@ -190,10 +199,9 @@ class Olive(Objet):
             self.hauteursaut = hauteursautmax
 
 
-
 class Mysteryhuman(Objet):
     def __init__(self, image, indexdefaut):
-        Objet.__init__(self , image, indexdefaut)
+        Objet.__init__(self, image, indexdefaut)
         self.rect.x, self.rect.y = 2000, 400
         self.vies = 1
         self.dommages = 1
