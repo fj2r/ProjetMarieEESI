@@ -1,6 +1,6 @@
 import os
 
-from conf import *
+from config import *
 
 
 def remplissageImagesSonsJeu (url) -> list:

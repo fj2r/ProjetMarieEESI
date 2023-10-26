@@ -9,14 +9,18 @@
 import sys, time
 import pygame as pg
 from classes import *
-from conf import *
+from config import *
 from fonctions import *
+
+
 
 def main():
     pg.init()  # initialisation des modules
     pg.mixer.init()  # initialisation du mixer son
     pg.font.init()  # initialisation des modules de police
     FPS = 60
+    # Constantes utiles
+    fichiersmapsecrete = remplissageImagesSonsJeu("img/map_secrète/")
 
     jeu = jeuetatinitial #état du jeu
     level = leveldemarrage # level de démarrage
@@ -24,6 +28,7 @@ def main():
     # construction de la fenetre principale du jeu
     #########################################
     fenetre = pg.display.set_mode(fenetretaille)
+    bgd = pg.display.set_mode(fenetretaille)
     fenetre.fill(fenetrecouleur)
     pg.display.set_caption("Olive et le MysteryHuMan")
 
@@ -61,7 +66,7 @@ def main():
     #########################################
     policeurl = policepardefaut
     #########################################
-    # Création des surfaces de décors
+    # Création des surfaces de décors - Level 1
     #########################################
     #sol = pg.image.load(fichiersdecors[2]).convert_alpha()
     #sol = pg.transform.scale(sol, (sol.get_width() * 2, sol.get_height() * 2))
@@ -78,17 +83,36 @@ def main():
     herbedevant = pg.transform.scale2x(
         herbedevant
     )
+
+    #########################################
+    # Création des surfaces de décors - Level 2
+    #########################################
+    # sol = pg.image.load(fichiersdecors[2]).convert_alpha()
+    # sol = pg.transform.scale(sol, (sol.get_width() * 2, sol.get_height() * 2))
+    mapmystere = pg.image.load("img/perso mystère/map_mystère.png").convert_alpha()
+    mapmystere = pg.transform.scale(mapmystere, (133 * 10, 3057 * 10))
+    decormapmystere = mapmystere.get_rect()
+    decormapmystere.left = 0
+    decormapmystere.bottom = fenetrehauteur
+    
+    mapsecretesol = pg.image.load(fichiersmapsecrete[2]).convert_alpha()
+    mapsecretesol = pg.transform.scale2x(mapsecretesol)
+    mapsecreteherbe = pg.image.load(fichiersmapsecrete[1]).convert_alpha()
+    mapsecreteherbe = pg.transform.scale2x(mapsecreteherbe)
+    mapsecreteciel = pg.image.load(fichiersmapsecrete[0]).convert_alpha()
+    mapsecreteciel = pg.transform.scale2x(mapsecreteciel)
+
     decorx = 0
-    decory = 0
+    decory = fenetrehauteur
     #########################################
     # Vecteurs des images du jeu pour les sprites
     #########################################
-    phylacteres = remplissageImagesSonsJeu("img/bulles/")
+    """phylacteres = remplissageImagesSonsJeu("img/bulles/")
     items = remplissageImagesSonsJeu("img/items/")
     fichiersmapsecrete = remplissageImagesSonsJeu("img/map_secrète/")
     olivedeplacements = remplissageImagesSonsJeu("img/olive deplacements/")
     olivechevalier = remplissageImagesSonsJeu("img/olive_deplacemnts_armure/")
-
+"""
     #########################################
     # création des groupes de sprites
     #########################################
@@ -232,6 +256,13 @@ def main():
                 if event.type == pg.KEYUP:
                     olive.index = 0 #remise à 0 des index des frames pour les vecteurs d'animations
                 if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_2:
+                        """listeglobalesprites.empty()
+                        listeglobalesprites.clear(fenetre, bgd)
+                        for sprite in listeglobalesprites :
+                            print(sprite)
+                            sprite.kill()"""
+                        level = 2
 
                     if event.key == pg.K_ESCAPE:
                         jeu = False
@@ -338,16 +369,33 @@ def main():
             pg.time.delay(40)
             pg.display.flip()
 #############################################################################
-#                 ** Niveau 2 **
+#                 ** Niveau 2 : salle mystere **
 #############################################################################
         if level == 2:
             listemusiques[5].stop()
+            for brique in listebriquessprites :
+                brique.kill()
+            for oeil in listeoeilsprites :
+
+                oeil.kill()
+            for epee in listeepeesprites :
+
+                epee.kill()
+
 
             #########################################
             # Gestion des évènements clavier - level 2
             #########################################
             for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    jeu = False
+                    pg.quit()
+                    sys.exit()
+                if event.type == pg.KEYUP:
+                    olive.index = 0 #remise
                 if event.type == pg.KEYDOWN:
+                    if event.type == pg.K_1 :
+                        level = 1
 
                     if event.key == pg.K_ESCAPE:
                         jeu = False
@@ -355,41 +403,29 @@ def main():
                         sys.exit()
                     if event.key == pg.K_LEFT:
                         if olive.estchevalier == False:
-                            olive.deplacerGauche(5, 7)
+                            olive.deplacerGaucheL2([1,2,3,2,1])
                         else:
-                            olive.deplacerGauche(0, 21)
-                        epee.scrollingdroite()
-                        brique.scrollingdroite()
-                        decorx += vitesse
-                        mapx += vitesse/2
+                            olive.deplacerGaucheL2([16,17,16])
+                        decorx += 0
+
 
                     if event.key == pg.K_RIGHT:
                         if olive.estchevalier == False:
-                            olive.deplacerDroite(1, 3)
+                            olive.deplacerDroiteL2([1,2,3,2,1])
                         else:
-                            olive.deplacerDroite(5, 7)
-                        epee.scrollinggauche()
-                        brique.scrollinggauche()
-                        decorx -= vitesse
-                        mapx -= vitesse/2
+                            olive.deplacerDroiteL2([16,17,16])
+
+                        decorx -= 0
+
 
                     if olive.entraindesauter == False :
                         if event.key == pg.K_LCTRL :
                             olive.entraindesauter = True
 
-
-
             #########################################
             # affichage des décors et éléments de sprites
             #########################################
-            fenetre.blit(
-                mapmystere,
-                (
-                    mapx,
-                    mapy
-                ),
-            )
-            affichageDecor(fenetre, decorx, herbederriere, fenetrelargeur, fenetrehauteur)
+            fenetre.blit(mapmystere,(0, -3057+fenetrehauteur))
 
             #########################################
             # Gestion des sprites et tests de collisions
@@ -399,14 +435,14 @@ def main():
                 olive, listeitemssprites, False
             )
 
-
-
-            # on update tous les sprites et on les affiche
+           # on update tous les sprites et on les affiche
             listeglobalesprites.update()
             listeolivesprite.update(listesolsprites,
-                                    listebriquessprites,
-                                    listeepeesprites,
-                                    zonescoreetvie
+                listebriquessprites,
+                listeepeesprites,
+                listeportesprites,
+                zonescoreetvie,
+                listeoeilsprites
                                     )
 
 

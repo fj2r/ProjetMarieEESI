@@ -7,6 +7,7 @@
 #
 #################################################################
 from fonctions import *
+from fonctions import remplissageImagesSonsJeu
 
 jeuetatinitial = True
 leveldemarrage = 0
@@ -21,7 +22,7 @@ timer = 0.01 #réglage du délai entre deux frames
 
 vitesse = 10
 hauteursaut = 12
-gravite = 6
+gravite = 8
 entraindesauter = False
 policepardefaut = "ttf/PixeloidSans.ttf"
 taillepolice = 24
@@ -78,3 +79,5 @@ for i in range (0,nbbrique):
 # les yeux :
 positionoeil = [(500,200),(800,200),(1200,200)]
 nboeil = len(positionoeil)
+
+# Les

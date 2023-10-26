@@ -1,7 +1,7 @@
 import pygame as pg
 import pygame.sprite
 
-from conf import *
+from config import *
 
 
 class Objet(pygame.sprite.Sprite):
@@ -45,9 +45,22 @@ class Phylactere(Objet):
 
     def __init__(self, image, indexdefaut):
         Objet.__init__(self, image, indexdefaut)
-        self.rect.y = 0
-        self.rect.x = 0
-        self.rect.size = (300, 300)
+        self.rect.y = 100
+        self.rect.x = 300
+        self.rect.size = (500, 500)
+        self.texte = "Ceci est un phylactère."
+        self.contenanttexte = pg.font.Font(policepardefaut, 14)
+
+    def update(self) -> None:
+        pass
+    def genererPhylactere(self, phylactere):
+        pass
+
+    def texte(self, fenetre):
+
+        self.textefinal = self.contenanttexte.render("%s" % self.texte, 0, (255, 255, 255))
+
+        fenetre.blit(self.textefinal, (20, 20))
 
 
 class Olive(Objet):
@@ -55,7 +68,6 @@ class Olive(Objet):
     : type Objet
     :arg Vecteur avec les fichiers pour afficher les animations du sprite
     """
-
     def __init__(self, image, indexdefaut):
         Objet.__init__(self, image, indexdefaut)
         self.rect.y = 300
@@ -79,6 +91,7 @@ class Olive(Objet):
 
     def gravite(self, gravite):
         self.rect.y += gravite
+        print(gravite)
 
     def update(
         self,
@@ -160,6 +173,14 @@ class Olive(Objet):
             self.rect.move_ip(0, 0)
         self.direction = "G"
         return "G"
+    def deplacerGaucheL2(self,listeframes):
+        self.mouvementsAnimationsFlip_x(listeframes[self.index])
+        self.index += 1
+        self.index = self.index % len(listeframes)
+        if self.rect.left < 0  :
+            self.rect.move_ip(0,0)
+        else :
+            self.rect.move_ip(-vitesse,0)
 
     def deplacerDroite(self, listeframes):
 
@@ -173,7 +194,14 @@ class Olive(Objet):
             self.rect.move_ip(0, 0)
         self.direction = "D"
         return "D"
-
+    def deplacerDroiteL2(self,listeframes):
+        self.mouvementsAnimations(listeframes[self.index])
+        self.index += 1
+        self.index = self.index % len(listeframes)
+        if self.rect.right > fenetrelargeur :
+            self.rect.move_ip(0,0)
+        else :
+            self.rect.move_ip(+vitesse,0)
     def mouvementsAnimations(self, i):
         print(i)
         self.image = self.listeimagespouranimation[i]
@@ -255,7 +283,7 @@ class Oeil(Objet):
         Objet.__init__(self, images, indexdefaut)
         self.rect.x = 0
         self.rect.y = 0
-        self.points = 1
+        self.points = 5
 
 
     def update(self) :
