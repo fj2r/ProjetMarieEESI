@@ -98,11 +98,13 @@ def main():
     listeoliveitemssprites = pg.sprite.Group()
     listeitemssprites = pg.sprite.Group()
     listeepeesprites = pg.sprite.Group()
+    listeportesprites = pg.sprite.Group()
     listebriquessprites = pg.sprite.Group()
     listesolsprites = pg.sprite.Group()
+    listeoeilsprites = pg.sprite.Group()
 
     #########################################
-    # instanciation des sprites
+    # instanciation des sprites et ajout aux groupes de sprites pour les sprites répétitifs
     #########################################
 
     olivevecteurimagessprites = remplissageVecteur(fichiersoliveconcatenee)
@@ -118,23 +120,38 @@ def main():
     epeevecteurimagesprite = remplissageVecteur(fichiersepee)
     epee = Epee(epeevecteurimagesprite, 0)
 
+    oeilvecteurimagesprite = remplissageVecteur(fichiersoeil)
+    for i in range(0, nboeil):
+        oeil = Oeil(oeilvecteurimagesprite, 0)
+        oeil.rect.x = positionoeil[i][0]
+        oeil.rect.y = positionoeil[i][1]
+
+        listeoeilsprites.add(oeil)
+        listeglobalesprites.add(oeil)
+
+    portevecteurimagesprite = remplissageVecteur(fichiersportedefin)
+    porte = Porte(portevecteurimagesprite, 0)
+
     briquesvecteurimagessprites = remplissageVecteur(fichiersbriques)
-    brique = Brique(briquesvecteurimagessprites, 0)
+    for i in range(0, nbbrique):
+        brique = Brique(briquesvecteurimagessprites, 0)
+        brique.rect.x = listepositionbriques[i][0]
+        brique.rect.y = listepositionbriques[i][1]
+        listebriquessprites.add(brique)
+        listeglobalesprites.add(brique)
     #########################################
-    # remplissage des groupes de sprites
+    # remplissage des groupes de sprites pour les sprites non répétitifs
     #########################################
     #listeglobalesprites.add(olive)
     listeolivesprite.add(olive)
     listebullessprite.add(bulle)
-    listeglobalesprites.add(bulle)
     listesolsprites.add(sol)
-    listeglobalesprites.add(sol)
     listeitemssprites.add(epee)
-    listeglobalesprites.add(epee)
     listeepeesprites.add(epee)
-    listeglobalesprites.add(brique)
-    listebriquessprites.add(brique)
+    listeportesprites.add(porte)
 
+
+    listeglobalesprites.add(porte, epee, sol, bulle)
     #########################################
     # démarrage de la musique de début après un delay
     #########################################
@@ -220,6 +237,7 @@ def main():
                         jeu = False
                         pg.quit()
                         sys.exit()
+
                     if event.key == pg.K_LEFT:
                         if current_timer >= animation_timer :
                             if olive.estchevalier == False:
@@ -227,7 +245,12 @@ def main():
                             else:
                                 olive.deplacerGauche([16,17,16])
                             epee.scrollingdroite()
-                            brique.scrollingdroite()
+                            porte.scrollingdroite()
+                            for brique in listebriquessprites :
+                                brique.scrollingdroite()
+                            for oeil in listeoeilsprites :
+                                oeil.scrollingdroite()
+
                             decorx += vitesse
                             mapx += vitesse/2
                             current_timer=0
@@ -241,7 +264,11 @@ def main():
                                 listeframes = ([16,17,16])
                                 olive.deplacerDroite(listeframes)
                             epee.scrollinggauche()
-                            brique.scrollinggauche()
+                            porte.scrollinggauche()
+                            for brique in listebriquessprites :
+                                brique.scrollinggauche()
+                            for oeil in listeoeilsprites :
+                                oeil.scrollinggauche()
                             decorx -= vitesse
                             mapx -= vitesse/2
                             current_timer=0
@@ -271,16 +298,20 @@ def main():
             #########################################
             # Gestion des sprites et tests de collisions
             #########################################
-
             listecollisionsoliveitems = pg.sprite.spritecollide(
                 olive, listeitemssprites, False
             )
-
-
-
             # on update tous les sprites et on les affiche
-            listeglobalesprites.update()
-            listeolivesprite.update(listesolsprites, listebriquessprites, listeepeesprites, zonescoreetvie)
+            listeglobalesprites.update() # test de collision dans la méthode update
+
+            listeolivesprite.update(
+                listesolsprites,
+                listebriquessprites,
+                listeepeesprites,
+                listeportesprites,
+                zonescoreetvie,
+                listeoeilsprites
+            )
 
 
 
@@ -372,7 +403,11 @@ def main():
 
             # on update tous les sprites et on les affiche
             listeglobalesprites.update()
-            listeolivesprite.update(listesolsprites, listebriquessprites, listeepeesprites, zonescoreetvie)
+            listeolivesprite.update(listesolsprites,
+                                    listebriquessprites,
+                                    listeepeesprites,
+                                    zonescoreetvie
+                                    )
 
 
 

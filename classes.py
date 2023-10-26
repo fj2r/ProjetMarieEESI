@@ -28,7 +28,6 @@ class Objet(pygame.sprite.Sprite):
         """self.image.set_colorkey(couleurtransparente)
         self.image = pg.transform.scale2x(self.image)"""
 
-
         self.rect = self.image.get_rect()
         self.rect.h = self.image.get_height()
         self.rect.w = self.image.get_width()
@@ -76,21 +75,38 @@ class Olive(Objet):
         self.animation_timer = 0.1
         self.current_frame = 0
         self.framesautolive = [4]
-        self.framesautchevalier = [20]
+        self.framesautchevalier = [19]
 
     def gravite(self, gravite):
         self.rect.y += gravite
 
     def update(
-        self, listesolsprites, listebriquessprites, listeepeesprites, zonescoreetvie
+        self,
+            listesolsprites,
+            listebriquessprites,
+            listeepeesprites,
+            listeportesprites,
+            zonescoreetvie,
+            listeoeilsprites
     ):
-
+        ##################################################
+        #           Liste des tests de collisions
+        #################################################
+        listecollisionoliveoeil = pg.sprite.spritecollide(self, listeoeilsprites, True)
         listecollisionsolivesbriques = pg.sprite.spritecollide(
             self, listebriquessprites, False
         )
+        listecollisionsoliveporte = pg.sprite.spritecollide(self, listeportesprites, False)
         listecollisionsoliveepee = pg.sprite.spritecollide(self, listeepeesprites, True)
         listecollisionsolivesol = pg.sprite.spritecollide(self, listesolsprites, False)
         ##################################################"
+        if listecollisionoliveoeil :
+            print("le doigt dans l'oeil !")
+            self.listesfx[0].play(0, 0, 0)
+            zonescoreetvie.calculScore(5)
+
+        if listecollisionsoliveporte :
+            print("Aïe la porte !")
         if listecollisionsolivesbriques:
             #print("collision brique")
             for brique in listecollisionsolivesbriques:
@@ -128,6 +144,7 @@ class Olive(Objet):
             self.estchevalier = True
             self.listesfx[0].play(0, 0, 0)
             zonescoreetvie.calculScore(20)
+            self.index=0
 
     def deplacerGauche(self, listeframes):
 
@@ -158,40 +175,31 @@ class Olive(Objet):
         return "D"
 
     def mouvementsAnimations(self, i):
-
+        print(i)
         self.image = self.listeimagespouranimation[i]
-
         pg.time.wait(0)
     def mouvementsAnimationsFlip_x(self, i):
+        print(i)
         self.image = self.listeimageflip_x[i]
-
         pg.time.wait(0)
     def sauter(self, hauteursautmax, listeframes):
 
         if self.entraindesauter == True:
             if self.direction == "D":
                 self.mouvementsAnimations(listeframes[0])
-
             if self.direction == "G":
-
                 self.mouvementsAnimationsFlip_x(listeframes[0])
-
             self.offset = int(self.hauteursaut**2 * (1 / 2) * self.signe)
-
             self.rect.y -= self.offset
             self.hauteursaut -= 1
-
             if self.hauteursaut < 0:
                 self.signe = -1
                 self.entraindetomber = True
-
             if self.hauteursaut == -hauteursautmax - 1:
-
                 self.entraindesauter = False
                 self.entraindetomber = False
                 self.signe = 1
                 self.hauteursaut = hauteursautmax
-
         if self.sautinterrompu == True and self.entraindetomber == True:
             self.entraindesauter = False
             self.entraindetomber = False
@@ -206,6 +214,14 @@ class Mysteryhuman(Objet):
         self.rect.x, self.rect.y = 2000, 400
         self.vies = 1
         self.dommages = 1
+    def update(self):
+        pass
+    def animation(self):
+        pass
+    def attaque(self):
+        pass
+    def dialogue(self):
+        pass
 
 
 class Epee(Objet):
@@ -220,6 +236,35 @@ class Epee(Objet):
     def scrollingdroite(self):
         self.rect.move_ip(vitesse, 0)
 
+class Porte(Objet):
+    def __init__(self, images, indexdefaut):
+        Objet.__init__(self, images, indexdefaut)
+        self.rect.left = 3000
+        self.rect.bottom = fenetrehauteur - 6
+
+    def update(self) :
+        pass
+    def scrollinggauche(self):
+        self.rect.move_ip(-vitesse, 0)
+
+    def scrollingdroite(self):
+        self.rect.move_ip(vitesse, 0)
+
+class Oeil(Objet):
+    def __init__(self, images, indexdefaut):
+        Objet.__init__(self, images, indexdefaut)
+        self.rect.x = 0
+        self.rect.y = 0
+        self.points = 1
+
+
+    def update(self) :
+        pass
+    def scrollinggauche(self):
+        self.rect.move_ip(-vitesse, 0)
+
+    def scrollingdroite(self):
+        self.rect.move_ip(vitesse, 0)
 
 class Sol(Objet):
     def __init__(self, image, indexdefaut):

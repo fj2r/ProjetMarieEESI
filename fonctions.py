@@ -3,7 +3,7 @@ import os
 from conf import *
 
 
-def remplissageImagesSonsJeu (url):
+def remplissageImagesSonsJeu (url) -> list:
     vecteur = []
     for item in os.listdir(url):
         vecteur.append(os.path.join(url, item))
