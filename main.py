@@ -3,7 +3,7 @@
 #       Jeu en Pygame pour projet EESI
 #       Graphics by Marie
 #       Coding by Fred - python ver. 3.8.5 - pygame ver.
-#       ver. alpha-0.5
+#       ver. beta-0.6
 #
 #################################################################
 import sys, time
@@ -12,21 +12,19 @@ from classes import *
 from config import *
 from fonctions import *
 
-
-
 def main():
     pg.init()  # initialisation des modules
-    pg.mixer.init()  # initialisation du mixer son
-    pg.font.init()  # initialisation des modules de police
+    #pg.mixer.init()  # initialisation du mixer son
+    #pg.font.init()  # initialisation des modules de police
     FPS = 60
-    # Constantes utiles
+    # #######################Constantes utiles#######################################
     fichiersmapsecrete = remplissageImagesSonsJeu("img/map_secrète/")
 
     jeu = jeuetatinitial #état du jeu
     level = leveldemarrage # level de démarrage
-    #########################################
-    # construction de la fenetre principale du jeu
-    #########################################
+    ##################################################################################
+    # construction de la fenêtre principale du jeu
+    ##################################################################################
     fenetre = pg.display.set_mode(fenetretaille)
     bgd = pg.display.set_mode(fenetretaille)
     fenetre.fill(fenetrecouleur)
@@ -65,13 +63,14 @@ def main():
     # declaration des polices du jeu
     #########################################
     policeurl = policepardefaut
+    policebulle = policepardefaut
     #########################################
     # Création des surfaces de décors - Level 1
     #########################################
     #sol = pg.image.load(fichiersdecors[2]).convert_alpha()
     #sol = pg.transform.scale(sol, (sol.get_width() * 2, sol.get_height() * 2))
-    mapmystere = pg.image.load('img/map_mystère.png').convert_alpha()
-    mapmystere = pg.transform.scale(mapmystere, (133*6,3057*6))
+    #mapmystere = pg.image.load('img/map_mystère.png').convert_alpha()
+    #mapmystere= pg.transform.scale(mapmystere, (133*1,3057*1))
     mapx = 0
     mapy = 0
 
@@ -90,7 +89,10 @@ def main():
     # sol = pg.image.load(fichiersdecors[2]).convert_alpha()
     # sol = pg.transform.scale(sol, (sol.get_width() * 2, sol.get_height() * 2))
     mapmystere = pg.image.load("img/perso mystère/map_mystère.png").convert_alpha()
-    mapmystere = pg.transform.scale(mapmystere, (133 * 10, 3057 * 10))
+
+    mapmysteregrossissement = fenetrelargeur/133
+    #print(mapmysteregrossissement)
+    mapmystere = pg.transform.scale(mapmystere, (int(133 * mapmysteregrossissement), int(3057 * mapmysteregrossissement)))
     decormapmystere = mapmystere.get_rect()
     decormapmystere.left = 0
     decormapmystere.bottom = fenetrehauteur
@@ -117,7 +119,7 @@ def main():
     # création des groupes de sprites
     #########################################
     listeglobalesprites = pg.sprite.Group()
-    listeolivesprite = pg.sprite.Group()
+    listeolivesprites = pg.sprite.Group()
     listebullessprite = pg.sprite.Group()
     listeoliveitemssprites = pg.sprite.Group()
     listeitemssprites = pg.sprite.Group()
@@ -126,6 +128,7 @@ def main():
     listebriquessprites = pg.sprite.Group()
     listesolsprites = pg.sprite.Group()
     listeoeilsprites = pg.sprite.Group()
+    listemysterysprites = pg.sprite.Group()
 
     #########################################
     # instanciation des sprites et ajout aux groupes de sprites pour les sprites répétitifs
@@ -134,6 +137,9 @@ def main():
     olivevecteurimagessprites = remplissageVecteur(fichiersoliveconcatenee)
     directionolive = "D"  # direction par défaut
     olive = Olive(olivevecteurimagessprites, 14)
+
+    mysteryhumanvecteurimagessprite = remplissageVecteur(fichiersmysteryhuman)
+    mysteryhuman = Mysteryhuman(mysteryhumanvecteurimagessprite, 2)
 
     bullesvecteurimagessprite = remplissageVecteur(fichiersbulles)
     bulle = Phylactere(bullesvecteurimagessprite, 0)
@@ -157,7 +163,7 @@ def main():
     porte = Porte(portevecteurimagesprite, 0)
 
     briquesvecteurimagessprites = remplissageVecteur(fichiersbriques)
-    for i in range(0, nbbrique):
+    for i in range(0, nbbriques):
         brique = Brique(briquesvecteurimagessprites, 0)
         brique.rect.x = listepositionbriques[i][0]
         brique.rect.y = listepositionbriques[i][1]
@@ -167,22 +173,22 @@ def main():
     # remplissage des groupes de sprites pour les sprites non répétitifs
     #########################################
     #listeglobalesprites.add(olive)
-    listeolivesprite.add(olive)
+    listeolivesprites.add(olive)
     listebullessprite.add(bulle)
     listesolsprites.add(sol)
     listeitemssprites.add(epee)
     listeepeesprites.add(epee)
     listeportesprites.add(porte)
+    listemysterysprites.add(mysteryhuman)
 
-
-    listeglobalesprites.add(porte, epee, sol, bulle)
+    listeglobalesprites.add( epee, sol, bulle)
     #########################################
     # démarrage de la musique de début après un delay
     #########################################
-    pg.time.wait(500)
-    listemusiques[5].play(0, 0, 500)  # pour écran d'accueil
+    pg.time.wait(200)
+    listemusiques[1].play(0, 5000, 500)  # pour écran d'accueil
     #######################################################################################
-    #                               boucle principale du jeu
+    #                               boucle principale du jeu                              #
     #######################################################################################
     while jeu:
         fenetre.fill(fenetrecouleur)
@@ -197,9 +203,9 @@ def main():
         #########################################
 
 
-        #########################################
-        # niveau 0 - Splash screen
-        #########################################
+##################################################################################
+#                       niveau 0 - Splash screen
+##################################################################################
         if level == 0:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -239,11 +245,14 @@ def main():
             pg.time.delay(10)
             pg.display.flip()
 ############################################################################
-#                 ** niveau 1 **
+#                            ** niveau 1 **
 ############################################################################
         if level == 1:
-            listemusiques[5].stop()
+
+
+            listemusiques = []
             current_timer += dt
+            #print(olive.entraindesauter)
 
             #########################################
             # Gestion des évènements clavier - level 1
@@ -255,6 +264,8 @@ def main():
                     sys.exit()
                 if event.type == pg.KEYUP:
                     olive.index = 0 #remise à 0 des index des frames pour les vecteurs d'animations
+                    olive.entraindesauter = False
+
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_2:
                         """listeglobalesprites.empty()
@@ -277,6 +288,7 @@ def main():
                                 olive.deplacerGauche([16,17,16])
                             epee.scrollingdroite()
                             porte.scrollingdroite()
+                            mysteryhuman.scrollingdroite()
                             for brique in listebriquessprites :
                                 brique.scrollingdroite()
                             for oeil in listeoeilsprites :
@@ -296,16 +308,18 @@ def main():
                                 olive.deplacerDroite(listeframes)
                             epee.scrollinggauche()
                             porte.scrollinggauche()
+                            mysteryhuman.scrollinggauche()
                             for brique in listebriquessprites :
                                 brique.scrollinggauche()
                             for oeil in listeoeilsprites :
                                 oeil.scrollinggauche()
                             decorx -= vitesse
+
                             mapx -= vitesse/2
                             current_timer=0
 
                     if olive.entraindesauter == False :
-                        if event.key == pg.K_LCTRL :
+                        if event.key == pg.K_LCTRL or event.key == pg.K_SPACE :
 
                             olive.entraindesauter = True
 
@@ -329,25 +343,27 @@ def main():
             #########################################
             # Gestion des sprites et tests de collisions
             #########################################
-            listecollisionsoliveitems = pg.sprite.spritecollide(
+            '''listecollisionsoliveitems = pg.sprite.spritecollide(
                 olive, listeitemssprites, False
-            )
+            )'''
             # on update tous les sprites et on les affiche
             listeglobalesprites.update() # test de collision dans la méthode update
-
-            listeolivesprite.update(
+            listeolivesprites.update(
                 listesolsprites,
                 listebriquessprites,
                 listeepeesprites,
-                listeportesprites,
+
                 zonescoreetvie,
-                listeoeilsprites
+                listeoeilsprites,
+                listemysterysprites
             )
+            listemysterysprites.update(listeolivesprites)
 
 
 
             listeglobalesprites.draw(fenetre)
-            listeolivesprite.draw(fenetre)
+            listemysterysprites.draw(fenetre)
+            listeolivesprites.draw(fenetre)
 
             # éléments de décor en avant plan
 
@@ -357,6 +373,7 @@ def main():
 
             if decorx >= fenetrelargeur or decorx <= -fenetrelargeur : # pour redessiner les décors à l'infini lors des déplacements
                 decorx = 0
+
             #########################################
             # affichage de la zone de score et de vies
             #########################################
@@ -369,17 +386,17 @@ def main():
             pg.time.delay(40)
             pg.display.flip()
 #############################################################################
-#                 ** Niveau 2 : salle mystere **
+#                 ** Niveau 2 :  **
 #############################################################################
         if level == 2:
-            listemusiques[5].stop()
+            listemusiques[1].stop()
+            current_timer += dt
+            #print(olive.entraindesauter)
             for brique in listebriquessprites :
                 brique.kill()
             for oeil in listeoeilsprites :
-
                 oeil.kill()
             for epee in listeepeesprites :
-
                 epee.kill()
 
 
@@ -418,14 +435,18 @@ def main():
                         decorx -= 0
 
 
-                    if olive.entraindesauter == False :
-                        if event.key == pg.K_LCTRL :
-                            olive.entraindesauter = True
+                    if olive.entraindesauterL2 == False :
+                        if event.key == pg.K_LCTRL or event.key == pg.K_SPACE :
+                            olive.entraindesauterL2 = True
+
+
+
+
 
             #########################################
             # affichage des décors et éléments de sprites
             #########################################
-            fenetre.blit(mapmystere,(0, -3057+fenetrehauteur))
+            fenetre.blit(mapmystere,(0, -3000*mapmysteregrossissement+fenetrehauteur-olive.decory))
 
             #########################################
             # Gestion des sprites et tests de collisions
@@ -437,7 +458,7 @@ def main():
 
            # on update tous les sprites et on les affiche
             listeglobalesprites.update()
-            listeolivesprite.update(listesolsprites,
+            listeolivesprites.update(listesolsprites,
                 listebriquessprites,
                 listeepeesprites,
                 listeportesprites,
@@ -448,24 +469,24 @@ def main():
 
 
             listeglobalesprites.draw(fenetre)
-            listeolivesprite.draw(fenetre)
+            listeolivesprites.draw(fenetre)
 
             # éléments de décor en avant plan
             fenetre.blit(
                 herbedevant,
                 (
                     decorx - herbedevant.get_width(),
-                    fenetrehauteur - herbedevant.get_height(),
+                    fenetrehauteur - herbedevant.get_height()-decory,
                 ),
             )
             fenetre.blit(
-                herbedevant, (decorx, fenetrehauteur - herbedevant.get_height())
+                herbedevant, (decorx, fenetrehauteur - herbedevant.get_height()-decory)
             )
             fenetre.blit(
                 herbedevant,
                 (
                     decorx + herbedevant.get_width(),
-                    fenetrehauteur - herbedevant.get_height(),
+                    fenetrehauteur - herbedevant.get_height()-decory,
                 ),
             )
             #########################################

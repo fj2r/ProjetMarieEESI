@@ -3,11 +3,11 @@
 #       Jeu en Pygame pour projet EESI
 #       Graphics by Marie
 #       Coding by Fred - python 3.8.5
-#       ver. alpha-0.1
+#       ver. beta-0.6
 #
 #################################################################
 from fonctions import *
-from fonctions import remplissageImagesSonsJeu
+from fonctions import remplissageImagesSonsJeu, calculListePositionObjets
 
 jeuetatinitial = True
 leveldemarrage = 0
@@ -24,8 +24,7 @@ vitesse = 10
 hauteursaut = 12
 gravite = 8
 entraindesauter = False
-policepardefaut = "ttf/PixeloidSans.ttf"
-taillepolice = 24
+
 
 couleurtransparente = (234, 21, 227)
 
@@ -33,7 +32,7 @@ couleurtransparente = (234, 21, 227)
 # Sons du jeu
 #############################################################
 fichierssons = remplissageImagesSonsJeu("son/sfx/ogg/")
-
+fichiersmusiquesL1 = remplissageImagesSonsJeu("son/musiques/ogg/")
 #############################################################
 # éléments de design des décors
 #############################################################
@@ -69,15 +68,24 @@ fichiersmysteryhumancombat = remplissageImagesSonsJeu('img/mystery_human_combat/
 ##############################################################
 
 # Les briques :
-nbbrique = 20
+nbbriques = 20
 taillebrique = 60
-listepositionbriques  = []
-for i in range (0,nbbrique):
-    positionbrique = (100+taillebrique*2*i,300)
-    listepositionbriques.append(positionbrique)
+listepositionbriques  = calculListePositionObjets(nbbriques,taillebrique)
+
 
 # les yeux :
 positionoeil = [(500,200),(800,200),(1200,200)]
 nboeil = len(positionoeil)
 
-# Les
+##############################################################
+#              dialogues des personnages
+##############################################################
+urldialogues = ""
+policedialogue = "ttf/PixeloidSans.ttf"
+taillepolicedialogues = 16
+
+##############################################################
+#              textes hors dialogues (splash, barre de statuts...)
+##############################################################
+policepardefaut = "ttf/PixeloidSans.ttf"
+taillepolice = 24
