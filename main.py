@@ -96,7 +96,7 @@ def main():
     decormapmystere = mapmystere.get_rect()
     decormapmystere.left = 0
     decormapmystere.bottom = fenetrehauteur
-    
+
     mapsecretesol = pg.image.load(fichiersmapsecrete[2]).convert_alpha()
     mapsecretesol = pg.transform.scale2x(mapsecretesol)
     mapsecreteherbe = pg.image.load(fichiersmapsecrete[1]).convert_alpha()
@@ -203,9 +203,9 @@ def main():
         #########################################
 
 
-##################################################################################
-#                       niveau 0 - Splash screen
-##################################################################################
+        ##################################################################################
+        #                       niveau 0 - Splash screen
+        ##################################################################################
         if level == 0:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -244,9 +244,9 @@ def main():
             fenetre.blit(splashtexte2, (100, fenetrehauteur -50 - taillepolice // 2))
             pg.time.delay(10)
             pg.display.flip()
-############################################################################
-#                            ** niveau 1 **
-############################################################################
+        ############################################################################
+        #                            ** niveau 1 **
+        ############################################################################
         if level == 1:
 
 
@@ -385,9 +385,9 @@ def main():
 
             pg.time.delay(40)
             pg.display.flip()
-#############################################################################
-#                 ** Niveau 2 :  **
-#############################################################################
+        #############################################################################
+        #                 ** Niveau 2 :  **
+        #############################################################################
         if level == 2:
             listemusiques[1].stop()
             current_timer += dt
@@ -456,15 +456,15 @@ def main():
                 olive, listeitemssprites, False
             )
 
-           # on update tous les sprites et on les affiche
+            # on update tous les sprites et on les affiche
             listeglobalesprites.update()
             listeolivesprites.update(listesolsprites,
-                listebriquessprites,
-                listeepeesprites,
-                listeportesprites,
-                zonescoreetvie,
-                listeoeilsprites
-                                    )
+                                     listebriquessprites,
+                                     listeepeesprites,
+                                     listeportesprites,
+                                     zonescoreetvie,
+                                     listeoeilsprites
+                                     )
 
 
 
