@@ -1,13 +1,10 @@
 import os
-
 from config import *
-
 def recupererdialogue (url) -> list:
     dialogues = []
     with open(url,"r") as file:
         dialogues = file.read().split(";")
     return dialogues
-
 def remplissageImagesSonsJeu (url) -> list:
     vecteur = []
     for item in os.listdir(url):
@@ -24,8 +21,6 @@ def remplissageVecteur(fichiers):
     for fichier in fichiers:
         vecteur.append(fichier)
     return vecteur
-
-
 def affichageDecor(fenetre, decorx, itemdecor, fenetrelargeur, fenetrehauteur):
     # positionnement des éléments de décor
     """fenetre.blit(

@@ -8,12 +8,14 @@
 #################################################################
 import sys, time
 import pygame as pg
+import pygame.freetype
 from classes import *
 from config import *
 from fonctions import *
 
 def main():
     pg.init()  # initialisation des modules
+    pg.freetype.init()
     #pg.mixer.init()  # initialisation du mixer son
     #pg.font.init()  # initialisation des modules de police
     FPS = 60
@@ -142,7 +144,7 @@ def main():
     mysteryhuman = Mysteryhuman(mysteryhumanvecteurimagessprite, 2)
 
     bullesvecteurimagessprite = remplissageVecteur(fichiersbulles)
-    bulle = Phylactere(bullesvecteurimagessprite, 0)
+    bulle = Phylactere(bullesvecteurimagessprite, 1)
 
     solvecteurimagessprites = remplissageVecteur(fichiersdecors)
     sol = Sol(solvecteurimagessprites, 2)
@@ -181,7 +183,7 @@ def main():
     listeportesprites.add(porte)
     listemysterysprites.add(mysteryhuman)
 
-    listeglobalesprites.add( epee, sol, bulle)
+    listeglobalesprites.add( epee, sol)
     #########################################
     # démarrage de la musique de début après un delay
     #########################################
@@ -289,6 +291,7 @@ def main():
                             epee.scrollingdroite()
                             porte.scrollingdroite()
                             mysteryhuman.scrollingdroite()
+                            bulle.scrollingdroite()
                             for brique in listebriquessprites :
                                 brique.scrollingdroite()
                             for oeil in listeoeilsprites :
@@ -309,6 +312,7 @@ def main():
                             epee.scrollinggauche()
                             porte.scrollinggauche()
                             mysteryhuman.scrollinggauche()
+                            bulle.scrollinggauche()
                             for brique in listebriquessprites :
                                 brique.scrollinggauche()
                             for oeil in listeoeilsprites :
@@ -346,23 +350,35 @@ def main():
             '''listecollisionsoliveitems = pg.sprite.spritecollide(
                 olive, listeitemssprites, False
             )'''
+            #position du mystery human et du phylactère :
+            positionMH = (mysteryhuman.rect.x, mysteryhuman.rect.y)
+
             # on update tous les sprites et on les affiche
             listeglobalesprites.update() # test de collision dans la méthode update
             listeolivesprites.update(
                 listesolsprites,
                 listebriquessprites,
                 listeepeesprites,
-
                 zonescoreetvie,
                 listeoeilsprites,
                 listemysterysprites
             )
-            listemysterysprites.update(listeolivesprites)
+            listebullessprite.update(fenetre, positionMH)
+            listemysterysprites.update(
+                listeolivesprites,
+                listebullessprite,
+                positionMH,
+                fenetre)
 
 
 
-            listeglobalesprites.draw(fenetre)
+            #listeglobalesprites.draw(fenetre)
+            listesolsprites.draw(fenetre)
+            listebriquessprites.draw(fenetre)
+            listeoeilsprites.draw(fenetre)
+            listeepeesprites.draw(fenetre)
             listemysterysprites.draw(fenetre)
+            #listebullessprite.draw(fenetre)
             listeolivesprites.draw(fenetre)
 
             # éléments de décor en avant plan

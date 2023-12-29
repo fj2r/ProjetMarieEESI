@@ -1,5 +1,6 @@
 import pygame as pg
 import pygame.sprite
+import pygame.freetype
 
 from config import *
 
@@ -68,22 +69,54 @@ class Phylactere(Objet):
 
     def __init__(self, image, indexdefaut):
         Objet.__init__(self, image, indexdefaut)
-        self.rect.y = 100
-        self.rect.x = 300
-        self.rect.size = (500, 500)
+        self.rect.right, self.rect.bottom = 2000+69*2, fenetrehauteur - 6 - 69*2
+        self.h, self.w = self.image.get_height(), self.image.get_width()
         self.texte = "Ceci est un phylactère."
-        self.contenanttexte = pg.font.Font(policepardefaut, 14)
+        self.textecouleur = textecouleur
+        self.contenanttexte = pg.font.Font(policedialogue, taillepolicedialogues)
+        self.policedialogues = pg.freetype.Font(policedialogue, taillepolicedialogues)
+        self.listedialogues = recupererdialogue(urldialogues)
+        self.indexdialogue = 0
 
-    def update(self) -> None:
-        pass
+    def update(self, fenetre, positionMH) -> None:
+        #self.rect.right, self.rect.bottom = positionMH
+        self.genererPhylactere() # on génère le phylactère à chaque update
 
-    def genererPhylactere(self, phylactere, fenetre):
-        self.textefinal = self.contenanttexte.render(
-            "%s" % self.texte, 0, (255, 255, 255)
+    def genererPhylactere(self):
+        '''
+        génère l'affichage du texte à l'intérieur de la bulle par création d'une somme de mots considérés comme des surfaces
+        :return: None
+        '''
+        self.listemots = self.splitdialogueenmots() #on découpe la phrase en plusieurs mots
+        self.space = self.contenanttexte.size(' ')[0] # on calcule la taille d'un espace
+        self.posx, self.posy = (20,20) # on fixe la position de départ
+
+        for mot in self.listemots :
+            self.motsurface = self.contenanttexte.render(mot, True, textecouleur) #pour chaque mot on crée une surface
+            self.wordw, self.wordh = self.motsurface.get_size() # dont on récupère les tailles par un tuple
+
+            if self.posx + self.wordw >= self.w : #on teste si la somme des tailles des surfaces dépasse du cadre
+                self.posx = 20 #on revient au départ sur les x
+                self.posy += self.wordh #on passe à la ligne suivante
+            self.image.blit(self.motsurface, (self.posx,self.posy)) # on n'a plus qu'à afficher dans la bulle
+            self.posx += self.wordw + self.space #on calcule la position du mot suivant en tenant compte des espaces
+        self.posx = 20
+        self.posy = 20
+        ''' self.textecourant = self.contenanttexte.render(
+            "%s" % self.listedialogues[self.indexdialogue], True, textecouleur
         )
+        #self.image.blit(self.currenttext,(20,20))
+        self.image.blit(self.textecourant, (20, 20))'''
 
-        fenetre.blit(self.textefinal, (20, 20))
 
+
+    def splitdialogueenmots(self):
+        '''
+        fonction pour récupérer la liste des mots contenus dans chaque dialogue
+
+        '''
+        listemots = (self.listedialogues[self.indexdialogue].split())
+        return listemots
 
 class Olive(Objet):
     """
@@ -315,8 +348,9 @@ class Mysteryhuman(Objet):
         self.listeframesselever = [2, 4, 2, 4, 5, 7]
         self.index2 = 0
         self.listeframesparler = [10, 13, 14, 14, 13, 10]
+        self.indexdialogue = 0
 
-    def update(self, listeolivesprite):
+    def update(self, listeolivesprite, listebullesprite,positionMH, fenetre):
         listecollisionmysteryhumanolive = pg.sprite.spritecollide(
             self, listeolivesprite, False
         )
@@ -326,13 +360,26 @@ class Mysteryhuman(Objet):
                 if self.index < len(self.listeframesselever):
                     self.selever()
                 else:
+                    self.listesmusiquesL1[0].fadeout(100)
                     self.sequence = 1
 
             if self.sequence == 1:
-                self.listesfx[2].play(0, 10, 0)
 
                 if self.index2 < len(self.listeframesparler):
                     self.parler()
+
+                    listebullesprite.draw(fenetre)
+
+                else:
+                    self.listesfx[2].fadeout(100)
+                    self.sequence = 2
+
+            if self.sequence == 2:
+                pass
+
+        else :
+            self.listesmusiquesL1[0].stop()
+            self.listesfx[2].stop()
 
     def animation(self):
         pass
@@ -346,13 +393,17 @@ class Mysteryhuman(Objet):
         pg.time.wait(300)
 
     def parler(self):
-
+        self.listesfx[2].play(0, 0, 0)
         self.mouvementsAnimations(self.listeframesparler[self.index2])
         # self.rect.left, self.rect.bottom = 2000, fenetrehauteur - 50
         self.index2 += 1
         self.index2 = self.index2 % len(self.listeframesparler)
 
         pg.time.wait(100)
+
+    def genererdialogues(self, index):
+        blabla = recupererdialogue(urldialogues)
+        print(blabla)
 
     def attaque(self):
         pass

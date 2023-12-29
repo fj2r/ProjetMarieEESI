@@ -80,10 +80,10 @@ nboeil = len(positionoeil)
 ##############################################################
 #              dialogues des personnages
 ##############################################################
-urldialogues = ""
+urldialogues = "dial/dialoguesMH.txt"
 policedialogue = "ttf/PixeloidSans.ttf"
-taillepolicedialogues = 16
-
+taillepolicedialogues = 14
+textecouleur = (0,0,0)
 ##############################################################
 #              textes hors dialogues (splash, barre de statuts...)
 ##############################################################
