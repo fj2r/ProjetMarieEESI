@@ -80,7 +80,10 @@ nboeil = len(positionoeil)
 ##############################################################
 #              dialogues des personnages
 ##############################################################
+fichierboitedialogue = ["img/bulles/bulle_informatons.png"]
 urldialogues = "dial/dialoguesMH.txt"
+urldialoguesOUI = "dial/dialoguesMHOUI.txt"
+urldialoguesNON = "dial/dialoguesMHNON.txt"
 policedialogue = "ttf/PixeloidSans.ttf"
 taillepolicedialogues = 14
 textecouleur = (0,0,0)

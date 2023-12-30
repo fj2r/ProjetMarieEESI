@@ -13,17 +13,18 @@ from classes import *
 from config import *
 from fonctions import *
 
+
 def main():
     pg.init()  # initialisation des modules
     pg.freetype.init()
-    #pg.mixer.init()  # initialisation du mixer son
-    #pg.font.init()  # initialisation des modules de police
+    # pg.mixer.init()  # initialisation du mixer son
+    # pg.font.init()  # initialisation des modules de police
     FPS = 60
     # #######################Constantes utiles#######################################
     fichiersmapsecrete = remplissageImagesSonsJeu("img/map_secrète/")
 
-    jeu = jeuetatinitial #état du jeu
-    level = leveldemarrage # level de démarrage
+    jeu = jeuetatinitial  # état du jeu
+    level = leveldemarrage  # level de démarrage
     ##################################################################################
     # construction de la fenêtre principale du jeu
     ##################################################################################
@@ -69,21 +70,17 @@ def main():
     #########################################
     # Création des surfaces de décors - Level 1
     #########################################
-    #sol = pg.image.load(fichiersdecors[2]).convert_alpha()
-    #sol = pg.transform.scale(sol, (sol.get_width() * 2, sol.get_height() * 2))
-    #mapmystere = pg.image.load('img/map_mystère.png').convert_alpha()
-    #mapmystere= pg.transform.scale(mapmystere, (133*1,3057*1))
+    # sol = pg.image.load(fichiersdecors[2]).convert_alpha()
+    # sol = pg.transform.scale(sol, (sol.get_width() * 2, sol.get_height() * 2))
+    # mapmystere = pg.image.load('img/map_mystère.png').convert_alpha()
+    # mapmystere= pg.transform.scale(mapmystere, (133*1,3057*1))
     mapx = 0
     mapy = 0
 
     herbederriere = pg.image.load(fichiersdecors[0]).convert_alpha()
-    herbederriere = pg.transform.scale2x(
-        herbederriere
-    )
+    herbederriere = pg.transform.scale2x(herbederriere)
     herbedevant = pg.image.load(fichiersdecors[1]).convert_alpha()
-    herbedevant = pg.transform.scale2x(
-        herbedevant
-    )
+    herbedevant = pg.transform.scale2x(herbedevant)
 
     #########################################
     # Création des surfaces de décors - Level 2
@@ -92,9 +89,12 @@ def main():
     # sol = pg.transform.scale(sol, (sol.get_width() * 2, sol.get_height() * 2))
     mapmystere = pg.image.load("img/perso mystère/map_mystère.png").convert_alpha()
 
-    mapmysteregrossissement = fenetrelargeur/133
-    #print(mapmysteregrossissement)
-    mapmystere = pg.transform.scale(mapmystere, (int(133 * mapmysteregrossissement), int(3057 * mapmysteregrossissement)))
+    mapmysteregrossissement = fenetrelargeur / 133
+    # print(mapmysteregrossissement)
+    mapmystere = pg.transform.scale(
+        mapmystere,
+        (int(133 * mapmysteregrossissement), int(3057 * mapmysteregrossissement)),
+    )
     decormapmystere = mapmystere.get_rect()
     decormapmystere.left = 0
     decormapmystere.bottom = fenetrehauteur
@@ -131,6 +131,7 @@ def main():
     listesolsprites = pg.sprite.Group()
     listeoeilsprites = pg.sprite.Group()
     listemysterysprites = pg.sprite.Group()
+    listeboitedialoguesprites = pg.sprite.Group()
 
     #########################################
     # instanciation des sprites et ajout aux groupes de sprites pour les sprites répétitifs
@@ -151,6 +152,9 @@ def main():
 
     epeevecteurimagesprite = remplissageVecteur(fichiersepee)
     epee = Epee(epeevecteurimagesprite, 0)
+
+    boitedialogueimagesprite = remplissageVecteur(fichierboitedialogue)
+    boitedialogue = Boitedialogue(boitedialogueimagesprite, 0)
 
     oeilvecteurimagesprite = remplissageVecteur(fichiersoeil)
     for i in range(0, nboeil):
@@ -174,7 +178,7 @@ def main():
     #########################################
     # remplissage des groupes de sprites pour les sprites non répétitifs
     #########################################
-    #listeglobalesprites.add(olive)
+    # listeglobalesprites.add(olive)
     listeolivesprites.add(olive)
     listebullessprite.add(bulle)
     listesolsprites.add(sol)
@@ -182,8 +186,9 @@ def main():
     listeepeesprites.add(epee)
     listeportesprites.add(porte)
     listemysterysprites.add(mysteryhuman)
+    listeboitedialoguesprites.add(boitedialogue)
 
-    listeglobalesprites.add( epee, sol)
+    listeglobalesprites.add(epee, sol)
     #########################################
     # démarrage de la musique de début après un delay
     #########################################
@@ -196,19 +201,19 @@ def main():
         fenetre.fill(fenetrecouleur)
         # on définit le fps
 
-        dt = horloge.tick(FPS)/1000
-        pg.key.set_repeat(50, 0)
+        dt = horloge.tick(FPS) / 1000
+        pg.key.set_repeat(20, 0)
         keys = pg.key.get_pressed()
 
         #########################################
         # Gestion des évènements clavier - jeu entier
         #########################################
 
-
         ##################################################################################
         #                       niveau 0 - Splash screen
         ##################################################################################
         if level == 0:
+            pg.key.set_repeat(20, 0)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     jeu = False
@@ -218,8 +223,8 @@ def main():
                     level = 1
 
             fenetre.fill(fenetrecouleur)
-            splash = pg.image.load('img/écran titre final.png').convert_alpha()
-            splash = pg.transform.scale(splash, (fenetrelargeur,fenetrehauteur))
+            splash = pg.image.load("img/écran titre final.png").convert_alpha()
+            splash = pg.transform.scale(splash, (fenetrelargeur, fenetrehauteur))
 
             police1 = pg.font.Font(policeurl, taillepolice)
             police2 = pg.font.Font(policeurl, taillepolice)
@@ -236,39 +241,40 @@ def main():
                 (255, 5, 0),
             )
             pg.time.wait(500)
-            fenetre.blit(splash, (0,0))
-            fenetre.blit(splashtexte, (100, fenetrehauteur -50 - taillepolice // 2))
+            fenetre.blit(splash, (0, 0))
+            fenetre.blit(splashtexte, (100, fenetrehauteur - 50 - taillepolice // 2))
             pg.time.delay(10)
             pg.display.flip()
             pg.time.wait(500)
             fenetre.fill(fenetrecouleur)
             fenetre.blit(splash, (0, 0))
-            fenetre.blit(splashtexte2, (100, fenetrehauteur -50 - taillepolice // 2))
+            fenetre.blit(splashtexte2, (100, fenetrehauteur - 50 - taillepolice // 2))
             pg.time.delay(10)
             pg.display.flip()
         ############################################################################
         #                            ** niveau 1 **
         ############################################################################
         if level == 1:
-
-
+            pg.key.set_repeat(20, 0)
             listemusiques = []
             current_timer += dt
-            #print(olive.entraindesauter)
+            # print(olive.entraindesauter)
 
             #########################################
             # Gestion des évènements clavier - level 1
             #########################################
+
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     jeu = False
                     pg.quit()
                     sys.exit()
                 if event.type == pg.KEYUP:
-                    olive.index = 0 #remise à 0 des index des frames pour les vecteurs d'animations
+                    olive.index = 0  # remise à 0 des index des frames pour les vecteurs d'animations
                     olive.entraindesauter = False
 
                 if event.type == pg.KEYDOWN:
+
                     if event.key == pg.K_2:
                         """listeglobalesprites.empty()
                         listeglobalesprites.clear(fenetre, bgd)
@@ -283,117 +289,155 @@ def main():
                         sys.exit()
 
                     if event.key == pg.K_LEFT:
-                        if current_timer >= animation_timer :
+                        if current_timer >= animation_timer:
                             if olive.estchevalier == False:
-                                olive.deplacerGauche([1,2,3,2,1])
+                                olive.deplacerGauche([1, 2, 3, 2, 1])
                             else:
-                                olive.deplacerGauche([16,17,16])
+                                olive.deplacerGauche([16, 17, 16])
                             epee.scrollingdroite()
                             porte.scrollingdroite()
                             mysteryhuman.scrollingdroite()
                             bulle.scrollingdroite()
-                            for brique in listebriquessprites :
+                            for brique in listebriquessprites:
                                 brique.scrollingdroite()
-                            for oeil in listeoeilsprites :
+                            for oeil in listeoeilsprites:
                                 oeil.scrollingdroite()
 
                             decorx += vitesse
-                            mapx += vitesse/2
-                            current_timer=0
+                            mapx += vitesse / 2
+                            current_timer = 0
 
                     if event.key == pg.K_RIGHT:
-                        if current_timer >= animation_timer :
+                        if current_timer >= animation_timer:
                             if olive.estchevalier == False:
-                                listeframes = ([1,2,3,2,1])
+                                listeframes = [1, 2, 3, 2, 1]
                                 olive.deplacerDroite(listeframes)
                             else:
-                                listeframes = ([16,17,16])
+                                listeframes = [16, 17, 16]
                                 olive.deplacerDroite(listeframes)
                             epee.scrollinggauche()
                             porte.scrollinggauche()
                             mysteryhuman.scrollinggauche()
                             bulle.scrollinggauche()
-                            for brique in listebriquessprites :
+                            for brique in listebriquessprites:
                                 brique.scrollinggauche()
-                            for oeil in listeoeilsprites :
+                            for oeil in listeoeilsprites:
                                 oeil.scrollinggauche()
                             decorx -= vitesse
 
-                            mapx -= vitesse/2
-                            current_timer=0
+                            mapx -= vitesse / 2
+                            current_timer = 0
 
-                    if olive.entraindesauter == False :
-                        if event.key == pg.K_LCTRL or event.key == pg.K_SPACE :
+                    if olive.entraindesauter == False:
+                        if event.key == pg.K_LCTRL or event.key == pg.K_SPACE:
 
                             olive.entraindesauter = True
 
+                if event.type == pg.KEYUP:
+                    if event.key == pg.K_RETURN:
+                        if bulle.indexdialogue < bulle.longueurlistedialogue:
+                            bulle.indexdialogue += 1
 
-
+                    if event.key == pg.K_o:
+                        boitedialogue.reponse = 1
+                        mysteryhuman.reponse = 1
+                    if event.key == pg.K_n:
+                        boitedialogue.reponse = 2
+                        mysteryhuman.reponse = 2
 
             #########################################
             # affichage des décors et éléments de sprites
             #########################################
             fenetre.blit(
                 mapmystere,
-                (
-                    mapx,
-                    mapy
-                ),
+                (mapx, mapy),
             )
-            affichageDecor(fenetre, decorx+herbederriere.get_width(), herbederriere, fenetrelargeur, fenetrehauteur)
-            affichageDecor(fenetre, decorx, herbederriere, fenetrelargeur, fenetrehauteur)
-            affichageDecor(fenetre, decorx-herbederriere.get_width(), herbederriere, fenetrelargeur, fenetrehauteur)
+            affichageDecor(
+                fenetre,
+                decorx + herbederriere.get_width(),
+                herbederriere,
+                fenetrelargeur,
+                fenetrehauteur,
+            )
+            affichageDecor(
+                fenetre, decorx, herbederriere, fenetrelargeur, fenetrehauteur
+            )
+            affichageDecor(
+                fenetre,
+                decorx - herbederriere.get_width(),
+                herbederriere,
+                fenetrelargeur,
+                fenetrehauteur,
+            )
 
             #########################################
             # Gestion des sprites et tests de collisions
             #########################################
-            '''listecollisionsoliveitems = pg.sprite.spritecollide(
+            """listecollisionsoliveitems = pg.sprite.spritecollide(
                 olive, listeitemssprites, False
-            )'''
-            #position du mystery human et du phylactère :
+            )"""
+            # position du mystery human et du phylactère :
             positionMH = (mysteryhuman.rect.x, mysteryhuman.rect.y)
 
             # on update tous les sprites et on les affiche
-            listeglobalesprites.update() # test de collision dans la méthode update
+            listeglobalesprites.update()  # test de collision dans la méthode update
             listeolivesprites.update(
                 listesolsprites,
                 listebriquessprites,
                 listeepeesprites,
                 zonescoreetvie,
                 listeoeilsprites,
-                listemysterysprites
+                listemysterysprites,
             )
-            listebullessprite.update(fenetre, positionMH)
+            listebullessprite.update()
+            listeboitedialoguesprites.update()
             listemysterysprites.update(
+                listeboitedialoguesprites,
                 listeolivesprites,
                 listebullessprite,
                 positionMH,
-                fenetre)
+                fenetre,
+                boitedialogue,
+                bulle,
+            )
 
-
-
-            #listeglobalesprites.draw(fenetre)
+            # listeglobalesprites.draw(fenetre)
             listesolsprites.draw(fenetre)
             listebriquessprites.draw(fenetre)
             listeoeilsprites.draw(fenetre)
             listeepeesprites.draw(fenetre)
             listemysterysprites.draw(fenetre)
-            #listebullessprite.draw(fenetre)
+            # listebullessprite.draw(fenetre)
             listeolivesprites.draw(fenetre)
 
             # éléments de décor en avant plan
 
-            affichageDecor(fenetre, decorx-herbedevant.get_width(), herbedevant, fenetrelargeur, fenetrehauteur+6)
-            affichageDecor(fenetre, decorx, herbedevant, fenetrelargeur, fenetrehauteur+6)
-            affichageDecor(fenetre, decorx+herbedevant.get_width(), herbedevant, fenetrelargeur, fenetrehauteur+6)
+            affichageDecor(
+                fenetre,
+                decorx - herbedevant.get_width(),
+                herbedevant,
+                fenetrelargeur,
+                fenetrehauteur + 6,
+            )
+            affichageDecor(
+                fenetre, decorx, herbedevant, fenetrelargeur, fenetrehauteur + 6
+            )
+            affichageDecor(
+                fenetre,
+                decorx + herbedevant.get_width(),
+                herbedevant,
+                fenetrelargeur,
+                fenetrehauteur + 6,
+            )
 
-            if decorx >= fenetrelargeur or decorx <= -fenetrelargeur : # pour redessiner les décors à l'infini lors des déplacements
+            if (
+                decorx >= fenetrelargeur or decorx <= -fenetrelargeur
+            ):  # pour redessiner les décors à l'infini lors des déplacements
                 decorx = 0
 
             #########################################
             # affichage de la zone de score et de vies
             #########################################
-
 
             zonescoreetvie.affichagescore(fenetre)
 
@@ -407,14 +451,13 @@ def main():
         if level == 2:
             listemusiques[1].stop()
             current_timer += dt
-            #print(olive.entraindesauter)
-            for brique in listebriquessprites :
+            # print(olive.entraindesauter)
+            for brique in listebriquessprites:
                 brique.kill()
-            for oeil in listeoeilsprites :
+            for oeil in listeoeilsprites:
                 oeil.kill()
-            for epee in listeepeesprites :
+            for epee in listeepeesprites:
                 epee.kill()
-
 
             #########################################
             # Gestion des évènements clavier - level 2
@@ -425,9 +468,9 @@ def main():
                     pg.quit()
                     sys.exit()
                 if event.type == pg.KEYUP:
-                    olive.index = 0 #remise
+                    olive.index = 0  # remise
                 if event.type == pg.KEYDOWN:
-                    if event.type == pg.K_1 :
+                    if event.type == pg.K_1:
                         level = 1
 
                     if event.key == pg.K_ESCAPE:
@@ -436,33 +479,30 @@ def main():
                         sys.exit()
                     if event.key == pg.K_LEFT:
                         if olive.estchevalier == False:
-                            olive.deplacerGaucheL2([1,2,3,2,1])
+                            olive.deplacerGaucheL2([1, 2, 3, 2, 1])
                         else:
-                            olive.deplacerGaucheL2([16,17,16])
+                            olive.deplacerGaucheL2([16, 17, 16])
                         decorx += 0
-
 
                     if event.key == pg.K_RIGHT:
                         if olive.estchevalier == False:
-                            olive.deplacerDroiteL2([1,2,3,2,1])
+                            olive.deplacerDroiteL2([1, 2, 3, 2, 1])
                         else:
-                            olive.deplacerDroiteL2([16,17,16])
+                            olive.deplacerDroiteL2([16, 17, 16])
 
                         decorx -= 0
 
-
-                    if olive.entraindesauterL2 == False :
-                        if event.key == pg.K_LCTRL or event.key == pg.K_SPACE :
+                    if olive.entraindesauterL2 == False:
+                        if event.key == pg.K_LCTRL or event.key == pg.K_SPACE:
                             olive.entraindesauterL2 = True
-
-
-
-
 
             #########################################
             # affichage des décors et éléments de sprites
             #########################################
-            fenetre.blit(mapmystere,(0, -3000*mapmysteregrossissement+fenetrehauteur-olive.decory))
+            fenetre.blit(
+                mapmystere,
+                (0, -3000 * mapmysteregrossissement + fenetrehauteur - olive.decory),
+            )
 
             #########################################
             # Gestion des sprites et tests de collisions
@@ -474,15 +514,14 @@ def main():
 
             # on update tous les sprites et on les affiche
             listeglobalesprites.update()
-            listeolivesprites.update(listesolsprites,
-                                     listebriquessprites,
-                                     listeepeesprites,
-                                     listeportesprites,
-                                     zonescoreetvie,
-                                     listeoeilsprites
-                                     )
-
-
+            listeolivesprites.update(
+                listesolsprites,
+                listebriquessprites,
+                listeepeesprites,
+                listeportesprites,
+                zonescoreetvie,
+                listeoeilsprites,
+            )
 
             listeglobalesprites.draw(fenetre)
             listeolivesprites.draw(fenetre)
@@ -492,23 +531,23 @@ def main():
                 herbedevant,
                 (
                     decorx - herbedevant.get_width(),
-                    fenetrehauteur - herbedevant.get_height()-decory,
+                    fenetrehauteur - herbedevant.get_height() - decory,
                 ),
             )
             fenetre.blit(
-                herbedevant, (decorx, fenetrehauteur - herbedevant.get_height()-decory)
+                herbedevant,
+                (decorx, fenetrehauteur - herbedevant.get_height() - decory),
             )
             fenetre.blit(
                 herbedevant,
                 (
                     decorx + herbedevant.get_width(),
-                    fenetrehauteur - herbedevant.get_height()-decory,
+                    fenetrehauteur - herbedevant.get_height() - decory,
                 ),
             )
             #########################################
             # affichage de la zone de score et de vies
             #########################################
-
 
             zonescoreetvie.affichagescore(fenetre)
 
@@ -518,7 +557,6 @@ def main():
             pg.display.flip()
         if level == 3:
             pass
-
 
 
 if __name__ == "__main__":
