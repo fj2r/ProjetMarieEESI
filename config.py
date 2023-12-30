@@ -63,6 +63,7 @@ fichiersoliveconcatenee = fichiersolive + fichiersolivechevalier
 fichiersmysteryhuman = remplissageImagesSonsJeu("img/perso mystère/")
 fichiersmysteryhumancombat = remplissageImagesSonsJeu('img/mystery_human_combat/')
 
+urlportrait = ["img/perso mystère/MH_Face.png"]
 ##############################################################
 #               Configuration du nombre d'items et positions
 ##############################################################

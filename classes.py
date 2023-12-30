@@ -75,7 +75,8 @@ class Phylactere(Objet):
         self.textecouleur = textecouleur
         self.contenanttexte = pg.font.Font(policedialogue, taillepolicedialogues)
         self.policedialogues = pg.freetype.Font(policedialogue, taillepolicedialogues)
-        self.listedialogues = recupererdialogue(urldialogues)
+        self.urldialogues = urldialogues
+        self.listedialogues = recupererdialogue(self.urldialogues)
         self.longueurlistedialogue = len(self.listedialogues)
         self.indexdialogue = 0
         self.calque = pg.Surface(
@@ -85,6 +86,9 @@ class Phylactere(Objet):
 
     def update(self) -> None:
         # self.rect.right, self.rect.bottom = positionMH
+        #print(self.urldialogues)
+        self.listedialogues = recupererdialogue(self.urldialogues)
+        self.longueurlistedialogue = len(self.listedialogues)
         if self.indexdialogue <= self.longueurlistedialogue:
             self.image.blit(self.calque, (20, 20))
             self.genererPhylactere()  # on génère le phylactère à chaque update
@@ -435,6 +439,8 @@ class Mysteryhuman(Objet):
         self.listeframesparler = [10, 13, 14, 14, 13, 10]
         self.indexdialogue = 0
         self.reponse = 0
+        self.listeframesavaler = []
+        self.index3 = 0
 
     def update(
         self,
@@ -460,31 +466,53 @@ class Mysteryhuman(Objet):
 
             if self.sequence == 1:  # animation pour 1ère partie dialogue
 
-                if bulle.indexdialogue < bulle.longueurlistedialogue :
-                    print (bulle.indexdialogue ,'/' ,  bulle.longueurlistedialogue)
+                if bulle.indexdialogue < bulle.longueurlistedialogue:
+                    #print(bulle.indexdialogue, "/", bulle.longueurlistedialogue)
                     if self.index2 < len(self.listeframesparler):
                         self.parler()
 
-                        listebullesprite.draw(fenetre)  # affichage des sprites de bulles
+                        listebullesprite.draw(
+                            fenetre
+                        )  # affichage des sprites de bulles
 
                 else:
                     self.listesfx[2].fadeout(100)
+                    self.index2 = 0
+                    bulle.indexdialogue = 0
                     self.sequence = 2
 
-            if self.sequence == 2:
-                if self.reponse == 0 :
+            if self.sequence == 2:  # question dans la boite de dialogue
+                if self.reponse == 0:
                     listeboitedialogue.draw(fenetre)
                 if self.reponse == 1:
-                    self.sequence =3
+                    self.sequence = 3
                 if self.reponse == 2:
                     self.sequence = 4
-                else :
+                else:
                     self.reponse = 0
 
-            if self.sequence == 3 :
-                pass
-            if self.sequence == 4 :
-                pass
+            if self.sequence == 3:  # si réponse oui -> dialogue continue
+                bulle.urldialogues = urldialoguesOUI
+                if bulle.indexdialogue < bulle.longueurlistedialogue:
+                    #print(bulle.indexdialogue, "/", bulle.longueurlistedialogue)
+                    if self.index2 < len(self.listeframesparler):
+                        self.parler()
+
+                        listebullesprite.draw(
+                            fenetre
+                        )  # affichage des sprites de bulles
+
+            if self.sequence == 4:  # si réponse non
+                self.affichePortrait(fenetre)
+                bulle.urldialogues = urldialoguesNON
+                if bulle.indexdialogue < bulle.longueurlistedialogue:
+                    #print(bulle.indexdialogue, "/", bulle.longueurlistedialogue)
+                    if self.index2 < len(self.listeframesparler):
+                        self.parler()
+
+                        listebullesprite.draw(
+                            fenetre
+                        )  # affichage des sprites de bulles
 
         else:
             self.listesmusiquesL1[0].stop()
@@ -500,15 +528,40 @@ class Mysteryhuman(Objet):
         self.index += 1
 
         pg.time.wait(300)
+        self.listesmusiquesL1[0].stop()
 
     def parler(self):
-        self.listesfx[2].play(0, 0, 0)
+        self.listesfx[2].play(0, 0, 10)
         self.mouvementsAnimations(self.listeframesparler[self.index2])
         # self.rect.left, self.rect.bottom = 2000, fenetrehauteur - 50
         self.index2 += 1
         self.index2 = self.index2 % len(self.listeframesparler)
 
-        pg.time.wait(100)
+        pg.time.wait(200)
+        self.listesfx[2].stop()
+
+    def avalerOlive(self):
+        self.mouvementsAnimations(self.listeframesavaler[self.index3])
+
+    def affichePortrait(self, fenetre):
+        self.urlportrait = urlportrait[0]
+        #print(self.urlportrait)
+        self.portrait = pygame.image.load(self.urlportrait).convert_alpha()
+        self.portrait.set_colorkey(couleurtransparente)
+        self.portrait = pg.transform.scale2x(self.portrait)
+        self.rectportrait = self.portrait.get_rect()
+        self.rectportrait.h, self.rectportrait.w = (
+            self.portrait.get_height(),
+            self.portrait.get_width(),
+        )
+        self.rectportrait.centerx, self.rectportrait.centery = (
+            fenetrelargeur // 2,
+            fenetrehauteur // 2 - 100,
+        )
+
+        fenetre.blit(
+            self.portrait, (fenetrelargeur//2 - self.rectportrait.x, 0)
+        )
 
     def genererdialogues(self, index):
         blabla = recupererdialogue(urldialogues)

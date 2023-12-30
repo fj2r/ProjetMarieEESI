@@ -193,7 +193,7 @@ def main():
     # démarrage de la musique de début après un delay
     #########################################
     pg.time.wait(200)
-    listemusiques[1].play(0, 5000, 500)  # pour écran d'accueil
+    listemusiques[1].play(0, 0, 500)  # pour écran d'accueil
     #######################################################################################
     #                               boucle principale du jeu                              #
     #######################################################################################
