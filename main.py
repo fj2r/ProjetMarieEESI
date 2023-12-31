@@ -255,6 +255,7 @@ def main():
         #                            ** niveau 1 **
         ############################################################################
         if level == 1:
+
             pg.key.set_repeat(20, 0)
             listemusiques = []
             current_timer += dt
@@ -445,11 +446,13 @@ def main():
 
             pg.time.delay(40)
             pg.display.flip()
+            if mysteryhuman.findesequence == 1 :
+                level = 2 # à la fin des dialogues on passe au niveau 2
         #############################################################################
         #                 ** Niveau 2 :  **
         #############################################################################
         if level == 2:
-            listemusiques[1].stop()
+            #listemusiques[1].stop()
             current_timer += dt
             # print(olive.entraindesauter)
             for brique in listebriquessprites:
@@ -482,7 +485,7 @@ def main():
                             olive.deplacerGaucheL2([1, 2, 3, 2, 1])
                         else:
                             olive.deplacerGaucheL2([16, 17, 16])
-                        decorx += 0
+                        decorx -= 0
 
                     if event.key == pg.K_RIGHT:
                         if olive.estchevalier == False:
@@ -490,7 +493,7 @@ def main():
                         else:
                             olive.deplacerDroiteL2([16, 17, 16])
 
-                        decorx -= 0
+                        decorx += 0
 
                     if olive.entraindesauterL2 == False:
                         if event.key == pg.K_LCTRL or event.key == pg.K_SPACE:
