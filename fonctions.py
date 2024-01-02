@@ -32,7 +32,15 @@ def calculListePositionBriquesL2(nb, taille, fenetrelargeur, fenetrehauteur) -> 
         position = (aleax, fenetrehauteur - (i * 400))
         vec.append(position)
     return vec
+def calculListePositionYeuxL2(nb, taille, fenetrelargeur, fenetrehauteur) -> list:
+    vec = []
 
+    for i in range (0 , nb):
+        aleax = random.randint(0, fenetrelargeur-taille*2)
+        aleay = random.randint(0, nb)
+        position = (aleax, fenetrehauteur - (i * aleay * 100))
+        vec.append(position)
+    return vec
 def remplissageVecteur(fichiers):
     vecteur = []
     for fichier in fichiers:

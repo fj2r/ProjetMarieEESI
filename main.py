@@ -160,8 +160,9 @@ def main():
     oeilvecteurimagesprite = remplissageVecteur(fichiersoeil)
     for i in range(0, nboeil):
         oeil = Oeil(oeilvecteurimagesprite, 0)
-        oeil.rect.x = positionoeil[i][0]
-        oeil.rect.y = positionoeil[i][1]
+        oeil.rect.x = listepositionyeux[i][0]
+        oeil.rect.y = listepositionyeux[i][1]
+        print(oeil.rect.x, " ",oeil.rect.y)
 
         listeoeilsprites.add(oeil)
         listeglobalesprites.add(oeil)
@@ -464,8 +465,8 @@ def main():
             #
             '''for brique in listebriquessprites:
                 brique.kill()'''
-            for oeil in listeoeilsprites:
-                oeil.kill()
+            '''for oeil in listeoeilsprites:
+                oeil.kill()'''
             """for epee in listeepeesprites:
                 epee.kill()"""
             for mysteryhuman in listemysterysprites:
@@ -517,10 +518,12 @@ def main():
                         olive.entraindesauterL2 == True
 
                     ):
-                        epee.scrollingbas(olive.offset/2)
+                        epee.scrollingbas(olive.offset//2)
                         for brique in listebriquessprites:
-                            brique.scrollingbas(olive.offset/2)
-                        sol.rect.y += olive.offset/2
+                            brique.scrollingbas(olive.offset//2)
+                        for oeil in listeoeilsprites:
+                            oeil.scrollingbas(olive.offset//2)
+                        sol.rect.y += olive.offset//2
 
                         decory += olive.decory*2
 
@@ -592,7 +595,7 @@ def main():
                 boitedialogue,
                 bulle,
             )
-
+            print(listeoeilsprites)
             # listeglobalesprites.draw(fenetre)
             listesolsprites.draw(fenetre)
             listebriquessprites.draw(fenetre)

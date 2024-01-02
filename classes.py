@@ -245,7 +245,7 @@ class Olive(Objet):
         else :
             self.rect.y += gravite
 
-    def graviteL2(self, gravite, listeepeesprites, listebriquessprites):
+    def graviteL2(self, gravite, listeepeesprites, listebriquessprites, listeoeilsprites):
 
         self.rect.y += 0
         if self.decory <= fenetrehauteur:
@@ -254,6 +254,8 @@ class Olive(Objet):
                 epee.rect.y -= gravite/2
             for briques  in listebriquessprites :
                 briques.rect.y -= gravite/2
+            for oeil in listeoeilsprites :
+                oeil.rect.y -= gravite/2
         else:
             self.decory += 0
 
@@ -342,7 +344,7 @@ class Olive(Objet):
         if self.level == 2:
             self.gravite(self.cstgravitaire)
 
-            self.graviteL2(self.cstgravitaire, listeepeesprites, listebriquessprites)
+            self.graviteL2(self.cstgravitaire, listeepeesprites, listebriquessprites,listeoeilsprites)
 
 
         """if self.entraindesauterL2 == False:

@@ -78,8 +78,11 @@ listepositionbriques = calculListePositionBriquesL2(nbbriques, taillebrique, fen
 
 
 # les yeux :
-positionoeil = [(500, 200), (800, 200), (1200, 200)]
-nboeil = len(positionoeil)
+#positionoeil = [(500, 200), (800, 200), (1200, 200)]
+nboeil = 20
+tailloeil = 64
+
+listepositionyeux = calculListePositionYeuxL2(nboeil, tailloeil, fenetrelargeur, fenetrehauteur)
 
 ##############################################################
 #              dialogues des personnages
