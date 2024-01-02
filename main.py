@@ -90,7 +90,7 @@ def main():
     mapmystere = pg.image.load("img/perso mystère/map_mystère.png").convert_alpha()
 
     mapmysteregrossissement = fenetrelargeur / 133
-    # print(mapmysteregrossissement)
+
     mapmystere = pg.transform.scale(
         mapmystere,
         (int(133 * mapmysteregrossissement), int(3057 * mapmysteregrossissement)),
@@ -126,6 +126,7 @@ def main():
     listeoliveitemssprites = pg.sprite.Group()
     listeitemssprites = pg.sprite.Group()
     listeepeesprites = pg.sprite.Group()
+
     listeportesprites = pg.sprite.Group()
     listebriquessprites = pg.sprite.Group()
     listesolsprites = pg.sprite.Group()
@@ -255,11 +256,11 @@ def main():
         #                            ** niveau 1 **
         ############################################################################
         if level == 1:
-
+            olive.level = 2
             pg.key.set_repeat(20, 0)
             listemusiques = []
             current_timer += dt
-            # print(olive.entraindesauter)
+
 
             #########################################
             # Gestion des évènements clavier - level 1
@@ -275,6 +276,8 @@ def main():
                     olive.entraindesauter = False
 
                 if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_1:
+                        level = 1
 
                     if event.key == pg.K_2:
                         """listeglobalesprites.empty()
@@ -331,7 +334,7 @@ def main():
 
                     if olive.entraindesauter == False:
                         if event.key == pg.K_LCTRL or event.key == pg.K_SPACE:
-
+                            olive.offset =0
                             olive.entraindesauter = True
 
                 if event.type == pg.KEYUP:
@@ -389,6 +392,7 @@ def main():
                 zonescoreetvie,
                 listeoeilsprites,
                 listemysterysprites,
+                sol,
             )
             listebullessprite.update()
             listeboitedialoguesprites.update()
@@ -446,22 +450,28 @@ def main():
 
             pg.time.delay(40)
             pg.display.flip()
-            if mysteryhuman.findesequence == 1 :
-                level = 2 # à la fin des dialogues on passe au niveau 2
+            if mysteryhuman.findesequence == 1:
+                level = 2  # à la fin des dialogues on passe au niveau 2
         #############################################################################
         #                 ** Niveau 2 :  **
         #############################################################################
         if level == 2:
-            #listemusiques[1].stop()
+            # listemusiques[1].stop()
+
             current_timer += dt
             # print(olive.entraindesauter)
-            for brique in listebriquessprites:
-                brique.kill()
+            '''for brique in listebriquessprites:
+                brique.kill()'''
             for oeil in listeoeilsprites:
                 oeil.kill()
-            for epee in listeepeesprites:
-                epee.kill()
+            """for epee in listeepeesprites:
+                epee.kill()"""
+            for mysteryhuman in listemysterysprites:
+                mysteryhuman.kill()
+            """for sol in listesolsprites:
+                sol.kill()"""
 
+            sol.rect.top = fenetrehauteur - 10
             #########################################
             # Gestion des évènements clavier - level 2
             #########################################
@@ -473,9 +483,9 @@ def main():
                 if event.type == pg.KEYUP:
                     olive.index = 0  # remise
                 if event.type == pg.KEYDOWN:
-                    if event.type == pg.K_1:
-                        level = 1
 
+                    if event.key == pg.K_1:
+                        level = 1
                     if event.key == pg.K_ESCAPE:
                         jeu = False
                         pg.quit()
@@ -497,38 +507,98 @@ def main():
 
                     if olive.entraindesauterL2 == False:
                         if event.key == pg.K_LCTRL or event.key == pg.K_SPACE:
+                            olive.offset = 0
                             olive.entraindesauterL2 = True
+
+
+                    if (
+                        olive.entraindesauterL2 == True
+
+                    ):
+                        epee.scrollingbas(olive.offset//4)
+                        for brique in listebriquessprites:
+                            brique.scrollingbas(olive.offset//4)
+                        sol.scrollingbas(olive.offset//4)
+
+                        decory += olive.decory*4
+
+                    else:
+                        epee.scrollingbas(0)
+                        decorx +=0
+                        decory -=0
 
             #########################################
             # affichage des décors et éléments de sprites
             #########################################
             fenetre.blit(
                 mapmystere,
-                (0, -3000 * mapmysteregrossissement + fenetrehauteur - olive.decory),
+                (
+                    0,
+                    -3000 * mapmysteregrossissement + fenetrehauteur * 5 - olive.decory,
+                ),
+            )
+            affichageDecorL2(
+                fenetre,
+                decorx - herbedevant.get_width(),
+                herbedevant,
+                fenetrelargeur,
+                fenetrehauteur + 6,
+                decory,
+                olive.offset
+            )
+            affichageDecorL2(
+                fenetre, decorx, herbedevant, fenetrelargeur, fenetrehauteur + 6,decory,olive.offset
+            )
+            affichageDecorL2(
+                fenetre,
+                decorx + herbedevant.get_width(),
+                herbedevant,
+                fenetrelargeur,
+                fenetrehauteur + 6,
+                decory,
+                olive.offset
             )
 
             #########################################
             # Gestion des sprites et tests de collisions
             #########################################
-
-            listecollisionsoliveitems = pg.sprite.spritecollide(
+            """listecollisionsoliveitems = pg.sprite.spritecollide(
                 olive, listeitemssprites, False
-            )
+            )"""
+            # position du mystery human et du phylactère :
+            positionMH = (mysteryhuman.rect.x, mysteryhuman.rect.y)
 
             # on update tous les sprites et on les affiche
-            listeglobalesprites.update()
+            listeglobalesprites.update()  # test de collision dans la méthode update
             listeolivesprites.update(
                 listesolsprites,
                 listebriquessprites,
                 listeepeesprites,
-                listeportesprites,
                 zonescoreetvie,
                 listeoeilsprites,
+                listemysterysprites,
+                sol,
+            )
+            listebullessprite.update()
+            listeboitedialoguesprites.update()
+            listemysterysprites.update(
+                listeboitedialoguesprites,
+                listeolivesprites,
+                listebullessprite,
+                positionMH,
+                fenetre,
+                boitedialogue,
+                bulle,
             )
 
-            listeglobalesprites.draw(fenetre)
+            # listeglobalesprites.draw(fenetre)
+            listesolsprites.draw(fenetre)
+            listebriquessprites.draw(fenetre)
+            listeoeilsprites.draw(fenetre)
+            listeepeesprites.draw(fenetre)
+            listemysterysprites.draw(fenetre)
+            # listebullessprite.draw(fenetre)
             listeolivesprites.draw(fenetre)
-
             # éléments de décor en avant plan
             fenetre.blit(
                 herbedevant,

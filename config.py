@@ -18,7 +18,7 @@ fenetrecouleur = (4, 9, 46)
 scoreinitial = 0
 vieoliveinitiale = 5
 estchevalier = False
-timer = 0.01 #réglage du délai entre deux frames
+timer = 0.01  # réglage du délai entre deux frames
 
 vitesse = 10
 hauteursaut = 12
@@ -57,25 +57,28 @@ fichiersbulles = remplissageImagesSonsJeu("img/bulles/")
 
 
 fichiersolive = remplissageImagesSonsJeu("img/olive deplacements/")
-fichiersolivechevalier = remplissageImagesSonsJeu('img/olive_deplacemnts_armure/')
+fichiersolivechevalier = remplissageImagesSonsJeu("img/olive_deplacemnts_armure/")
 fichiersoliveconcatenee = fichiersolive + fichiersolivechevalier
 
 fichiersmysteryhuman = remplissageImagesSonsJeu("img/perso mystère/")
-fichiersmysteryhumancombat = remplissageImagesSonsJeu('img/mystery_human_combat/')
+fichiersmysteryhumancombat = remplissageImagesSonsJeu("img/mystery_human_combat/")
 
 urlportrait = ["img/perso mystère/MH_Face.png"]
 ##############################################################
 #               Configuration du nombre d'items et positions
 ##############################################################
+# Epee :
+epee_centerx = fenetrelargeur // 2
+epee_y = fenetrehauteur - 500
 
 # Les briques :
 nbbriques = 20
 taillebrique = 60
-listepositionbriques  = calculListePositionObjets(nbbriques,taillebrique)
+listepositionbriques = calculListePositionObjetsL2(nbbriques, taillebrique, fenetrelargeur, fenetrehauteur)
 
 
 # les yeux :
-positionoeil = [(500,200),(800,200),(1200,200)]
+positionoeil = [(500, 200), (800, 200), (1200, 200)]
 nboeil = len(positionoeil)
 
 ##############################################################
@@ -87,7 +90,7 @@ urldialoguesOUI = "dial/dialoguesMHOUI.txt"
 urldialoguesNON = "dial/dialoguesMHNON.txt"
 policedialogue = "ttf/PixeloidSans.ttf"
 taillepolicedialogues = 14
-textecouleur = (0,0,0)
+textecouleur = (0, 0, 0)
 ##############################################################
 #              textes hors dialogues (splash, barre de statuts...)
 ##############################################################

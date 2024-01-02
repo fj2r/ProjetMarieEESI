@@ -45,11 +45,11 @@ class Objet(pygame.sprite.Sprite):
     def scrollingdroite(self):
         self.rect.move_ip(vitesse, 0)
 
-    def scrollinghaut(self):
-        self.rect.move_ip(0, -vitesse)
+    def scrollinghaut(self, offset):
+        self.rect.move_ip(0, +offset)
 
-    def scrollingbas(self):
-        self.rect.move_ip(0, vitesse)
+    def scrollingbas(self, offset):
+        self.rect.move_ip(0, +offset)
 
     def mouvementsAnimations(self, i):
         # print(i)
@@ -215,6 +215,7 @@ class Olive(Objet):
 
     def __init__(self, image, indexdefaut):
         Objet.__init__(self, image, indexdefaut)
+        self.level = 1
         self.rect.y = 200
         self.offset = 0
         self.rect.left = (fenetrelargeur - self.rect.w) // 20
@@ -242,8 +243,12 @@ class Olive(Objet):
         self.rect.y += gravite
 
     def graviteL2(self, gravite):
-        self.decory -= gravite
-        # print(self.decory)
+
+        self.rect.y += 0
+        if self.decory <= fenetrehauteur:
+            self.decory += gravite // 4
+        else:
+            self.decory += 0
 
     def update(
         self,
@@ -253,7 +258,9 @@ class Olive(Objet):
         zonescoreetvie,
         listeoeilsprites,
         listemysterysprites,
+        sol,
     ):
+
         ##################################################
         #           Liste des tests de collisions
         #################################################
@@ -281,49 +288,60 @@ class Olive(Objet):
             self.index = 0
         if listecollisionolivemysteryhuman:
             # print("Enfin le voilà !")
-            zonescoreetvie.calculScore(50)
+            pass
 
         if listecollisionsolivesbriques:
-            # print("collision brique")
-            for brique in listecollisionsolivesbriques:
-
-                self.rect.bottom = brique.rect.y + 0
-                self.sautinterrompu = True
-
             self.cstgravitaire = 0
+            for brique in listecollisionsolivesbriques:
+                print("je suis sur une brique")
+                self.rect.bottom = brique.rect.top + 1
+                self.decory += 0
+                self.sautinterrompu = True
+                self.cstgravitaire = 0
 
-        else:
-            self.cstgravitaire = gravite
+        elif listecollisionsolivesol:
 
-        if listecollisionsolivesol:
-            # print("collision sol")
             for sol in listecollisionsolivesol:
                 self.rect.bottom = sol.rect.y + 1
+
+                self.decory += 0
 
             self.cstgravitaire = 0
             # self.entraindesauter = False
             # self.entraindetomber = False
+
         else:
             self.cstgravitaire = gravite
 
         # gestion des mouvements de sauts
         if self.entraindesauter == True:
-            # print("hop !")
+
             if self.estchevalier == False:
                 self.sauter(hauteursaut, self.framesautolive)
             else:
                 self.sauter(hauteursaut, self.framesautchevalier)
-        self.gravite(self.cstgravitaire)
 
         if self.entraindesauterL2 == True:
+
             if self.estchevalier == False:
-                self.sauterL2(hauteursaut, self.framesautolive)
+                self.sauterL2(hauteursaut, self.framesautolive, sol)
 
             else:
-                self.sauterL2(hauteursaut, self.framesautchevalier)
-        self.graviteL2(self.cstgravitaire)
+                self.sauterL2(hauteursaut, self.framesautchevalier, sol)
+        if self.level == 1:
+            self.gravite(self.cstgravitaire)
+        if self.level == 2:
+            self.gravite(self.cstgravitaire)
 
-        # print(self.cstgravitaire)
+            self.graviteL2(self.cstgravitaire)
+
+        """if self.entraindesauterL2 == False:
+            if self.rect.bottom >= fenetrehauteur - 6 :
+                self.rect.move_ip(0, 0)
+                self.decory -= gravite
+            else:
+                self.rect.move_ip(0, gravite)
+                self.decory += gravite"""
 
     def deplacerGauche(self, listeframes):
 
@@ -376,17 +394,56 @@ class Olive(Objet):
         return "D"
 
     def sauter(self, hauteursautmax, listeframes):
+        self.signe = +1
+        self.offset = 0
         if self.entraindesauter == True:
             if self.direction == "D":
                 self.mouvementsAnimations(listeframes[0])
             if self.direction == "G":
                 self.mouvementsAnimationsFlip_x(listeframes[0])
+
             self.offset = int(self.hauteursaut**2 * (1 / 2) * self.signe)
             self.rect.y -= self.offset
+            self.hauteursaut -= 1
+
+            if self.hauteursaut < 0:
+                self.signe = -1
+                self.entraindetomber = True
+
+            if self.hauteursaut == -hauteursautmax - 1:
+                self.entraindesauter = False
+                self.entraindetomber = False
+                self.signe = 1
+                self.hauteursaut = hauteursautmax
+
+        if self.sautinterrompu == True and self.entraindetomber == True:
+            self.entraindesauter = False
+            self.entraindetomber = False
+            self.offset = 0
+            self.signe = 1
+            self.hauteursaut = hauteursautmax
+
+    def sauterL2(self, hauteursautmax, listeframes, sol):
+        self.signe = +1
+        self.offset = 0
+        if self.entraindesauterL2 == True:
+
+            if self.direction == "D":
+                self.mouvementsAnimations(listeframes[0])
+            if self.direction == "G":
+                self.mouvementsAnimationsFlip_x(listeframes[0])
+
+            self.offset = int(self.hauteursaut**2 * (1 / 2) * self.signe)
+
+            self.rect.y -= self.offset
+            self.decory -= self.offset
+
             self.hauteursaut -= 1
             if self.hauteursaut < 0:
                 self.signe = -1
                 self.entraindetomber = True
+                self.entraindesauterL2 = False
+                self.decory += self.offset
             if self.hauteursaut == -hauteursautmax - 1:
                 self.entraindesauter = False
                 self.entraindetomber = False
@@ -398,32 +455,7 @@ class Olive(Objet):
             self.offset = 0
             self.signe = 1
             self.hauteursaut = hauteursautmax
-
-    def sauterL2(self, hauteursautmax, listeframes):
-        if self.entraindesauterL2 == True:
-            if self.direction == "D":
-                self.mouvementsAnimations(listeframes[0])
-            if self.direction == "G":
-                self.mouvementsAnimationsFlip_x(listeframes[0])
-            self.offset = int(self.hauteursaut**2 * (1 / 2) * self.signe)
-            self.decory -= self.offset
-            self.hauteursaut -= 1
-            if self.hauteursaut < 0:
-                self.signe = -1
-                self.entraindetomberL2 = True
-            if self.hauteursaut == -hauteursautmax - 1:
-                self.entraindesauterL2 = False
-                self.entraindetomberL2 = False
-                self.signe = 1
-                self.hauteursaut = hauteursautmax
-        if self.sautinterrompu == True and self.entraindetomberL2 == True:
-            self.entraindesauterL2 = False
-            self.entraindetomberL2 = False
-            self.offset = 0
-            self.signe = 1
-            self.hauteursaut = hauteursautmax
-        if self.entraindesauterL2 == False:
-            self.decory += gravite
+        # self.hauteursaut = hauteursautmax
 
 
 class Mysteryhuman(Objet):
@@ -471,7 +503,7 @@ class Mysteryhuman(Objet):
             if self.sequence == 1:  # animation pour 1ère partie dialogue
 
                 if bulle.indexdialogue < bulle.longueurlistedialogue:
-                    # print(bulle.indexdialogue, "/", bulle.longueurlistedialogue)
+
                     if self.index2 < len(self.listeframesparler):
                         self.parler()
 
@@ -523,12 +555,15 @@ class Mysteryhuman(Objet):
                 else:
                     self.effacerPortrait(fenetre)
             if self.sequence == 5:
+                zonescoreetvie.calculScore(50)
                 self.fin = self.avalerOlive()
-                if self.fin == True :
+                if self.fin == True:
                     self.sequence = 6
                 pg.time.wait(500)
             if self.sequence == 6:
                 self.findesequence = 1
+                listeolivesprite.rect.x = 200
+                listeolivesprite.rect.y = 200
 
         else:
             self.listesmusiquesL1[0].stop()
@@ -556,14 +591,14 @@ class Mysteryhuman(Objet):
         pg.time.wait(200)
         self.listesfx[2].stop()
 
-    def avalerOlive(self) : #retourne un booléen quand la fonction est terminée
+    def avalerOlive(self):  # retourne un booléen quand la fonction est terminée
         self.mouvementsAnimations(self.listeframesavaler[self.index3])
         self.index3 += 1
         self.index3 = self.index3 % len(self.listeframesavaler)
         pg.time.wait(200)
-        if self.index3 == 0 :
+        if self.index3 == 0:
             return True
-        else :
+        else:
             return False
 
     def affichePortrait(self, fenetre):
@@ -608,8 +643,8 @@ class Mysteryhuman(Objet):
 class Epee(Objet):
     def __init__(self, images, indexdefaut):
         Objet.__init__(self, images, indexdefaut)
-        self.rect.left = 1000
-        self.rect.bottom = fenetrehauteur - 6
+        self.rect.centerx = epee_centerx
+        self.rect.y = epee_y
 
     def scrollinggauche(self):
         self.rect.move_ip(-vitesse, 0)
@@ -617,11 +652,11 @@ class Epee(Objet):
     def scrollingdroite(self):
         self.rect.move_ip(vitesse, 0)
 
-    def scrollinghaut(self):
-        self.rect.move_ip(0, -vitesse)
+    def scrollinghaut(self, offset):
+        self.rect.move_ip(0, -offset)
 
-    def scrollingbas(self):
-        self.rect.move_ip(0, vitesse)
+    def scrollingbas(self, offset):
+        self.rect.move_ip(0, +offset)
 
 
 class Porte(Objet):
@@ -656,11 +691,11 @@ class Oeil(Objet):
     def scrollingdroite(self):
         self.rect.move_ip(vitesse, 0)
 
-    def scrollinghaut(self):
-        self.rect.move_ip(0, -vitesse)
+    def scrollinghaut(self, offset):
+        self.rect.move_ip(0, +offset)
 
-    def scrollingbas(self):
-        self.rect.move_ip(0, vitesse)
+    def scrollingbas(self, offset):
+        self.rect.move_ip(0, +offset)
 
 
 class Sol(Objet):
@@ -675,12 +710,6 @@ class Sol(Objet):
     def scrollingdroite(self):
         self.rect.move_ip(vitesse, 0)
 
-    def scrollingverticalhaut(self):
-        self.rect.move_ip(0, -vitesse)
-
-    def scrollingverticalbas(self):
-        self.rect.move_ip(0, +vitesse)
-
 
 class Brique(Objet):
     def __init__(self, image, indexdefaut):
@@ -693,12 +722,6 @@ class Brique(Objet):
 
     def scrollingdroite(self):
         self.rect.move_ip(vitesse, 0)
-
-    def scrollinghaut(self):
-        self.rect.move_ip(0, -vitesse)
-
-    def scrollingbas(self):
-        self.rect.move_ip(0, vitesse)
 
 
 class AffichageScoreVies(pygame.font.Font):
