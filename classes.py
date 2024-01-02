@@ -240,17 +240,20 @@ class Olive(Objet):
         self.decorx = 0
 
     def gravite(self, gravite):
-        self.rect.y += gravite
+        if self.rect.bottom >= fenetrehauteur:
+            self.rect.y += 0
+        else :
+            self.rect.y += gravite
 
     def graviteL2(self, gravite, listeepeesprites, listebriquessprites):
 
         self.rect.y += 0
         if self.decory <= fenetrehauteur:
-            self.decory += gravite // 4
+            self.decory += gravite/2
             for epee in listeepeesprites:
-                epee.rect.y += gravite //4
+                epee.rect.y -= gravite/2
             for briques  in listebriquessprites :
-                briques.rect.y += gravite //4
+                briques.rect.y -= gravite/2
         else:
             self.decory += 0
 
@@ -297,11 +300,13 @@ class Olive(Objet):
         if listecollisionsolivesbriques:
             self.cstgravitaire = 0
             for brique in listecollisionsolivesbriques:
-                print("je suis sur une brique")
-                self.rect.bottom = brique.rect.top + 1
-                self.decory += 0
-                self.sautinterrompu = True
-                self.cstgravitaire = 0
+
+                #print(brique.rect.bottom)
+                if self.rect.bottom >= fenetrehauteur:
+                    self.rect.bottom = brique.rect.top + 1
+                    self.decory += 0
+                    self.sautinterrompu = True
+                    self.cstgravitaire = 0
 
         elif listecollisionsolivesol:
 
@@ -438,7 +443,7 @@ class Olive(Objet):
         self.signe = +1
         self.offset = 0
         if self.entraindesauterL2 == True:
-            print(self.rect.top)
+            #print(self.rect.top)
 
             if self.direction == "D":
                 self.mouvementsAnimations(listeframes[0])
@@ -450,7 +455,7 @@ class Olive(Objet):
             if self.rect.top < 0:
                 self.sautinterrompu = True
                 self.entraindetomberL2 = True
-                self.rect.y -= 0
+                self.rect.y = 0
                 self.decory -= 0
                 #self.hauteursaut = -1
             else:
@@ -643,7 +648,7 @@ class Mysteryhuman(Objet):
 
     def effacerPortrait(self, fenetre):
         self.portrait.fill(fenetrecouleur)
-        print("calque")
+        #print("calque")
 
     def genererdialogues(self, index):
         blabla = recupererdialogue(urldialogues)

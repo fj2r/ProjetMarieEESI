@@ -1,5 +1,6 @@
 import os
 from config import *
+import random
 
 
 def recupererdialogue(url) -> list:
@@ -25,8 +26,10 @@ def calculListePositionObjets(nb, taille) -> list:
 
 def calculListePositionBriquesL2(nb, taille, fenetrelargeur, fenetrehauteur) -> list:
     vec = []
+
     for i in range (0 , nb):
-        position = (fenetrelargeur - taille*2, fenetrehauteur - (i * 300))
+        aleax = random.randint(0, fenetrelargeur-taille*2)
+        position = (aleax, fenetrehauteur - (i * 400))
         vec.append(position)
     return vec
 

@@ -48,7 +48,7 @@ fichiersbriques = ["img/items/brique 1.png", "img/items/brique 2.png"]
 #############################################################
 fichiersitems = remplissageImagesSonsJeu("img/items/")
 fichiersoeil = ["img/items/oeil_a_collecter.png"]
-fichiersportedefin = remplissageImagesSonsJeu("img/porte de fin/")
+#fichiersportedefin = remplissageImagesSonsJeu("img/porte de fin/")
 fichiersepee = ["img/items/jv epee.png"]
 #############################################################
 # éléments de design des personnages
@@ -69,10 +69,10 @@ urlportrait = ["img/perso mystère/MH_Face.png"]
 ##############################################################
 # Epee :
 epee_centerx = fenetrelargeur // 2
-epee_y = fenetrehauteur - 500
+epee_y = fenetrehauteur - 10000
 
 # Les briques :
-nbbriques = 20
+nbbriques = 30
 taillebrique = 60
 listepositionbriques = calculListePositionBriquesL2(nbbriques, taillebrique, fenetrelargeur, fenetrehauteur)
 

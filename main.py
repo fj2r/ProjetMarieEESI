@@ -89,7 +89,7 @@ def main():
     # sol = pg.transform.scale(sol, (sol.get_width() * 2, sol.get_height() * 2))
     mapmystere = pg.image.load("img/perso mystère/map_mystère.png").convert_alpha()
 
-    mapmysteregrossissement = fenetrelargeur / 133
+    mapmysteregrossissement = fenetrelargeur // 133
 
     mapmystere = pg.transform.scale(
         mapmystere,
@@ -127,7 +127,7 @@ def main():
     listeitemssprites = pg.sprite.Group()
     listeepeesprites = pg.sprite.Group()
 
-    listeportesprites = pg.sprite.Group()
+    #listeportesprites = pg.sprite.Group()
     listebriquessprites = pg.sprite.Group()
     listesolsprites = pg.sprite.Group()
     listeoeilsprites = pg.sprite.Group()
@@ -166,8 +166,8 @@ def main():
         listeoeilsprites.add(oeil)
         listeglobalesprites.add(oeil)
 
-    portevecteurimagesprite = remplissageVecteur(fichiersportedefin)
-    porte = Porte(portevecteurimagesprite, 0)
+    #portevecteurimagesprite = remplissageVecteur(fichiersportedefin)
+    #porte = Porte(portevecteurimagesprite, 0)
 
     briquesvecteurimagessprites = remplissageVecteur(fichiersbriques)
     for i in range(0, nbbriques):
@@ -185,7 +185,7 @@ def main():
     listesolsprites.add(sol)
     listeitemssprites.add(epee)
     listeepeesprites.add(epee)
-    listeportesprites.add(porte)
+    #listeportesprites.add(porte)
     listemysterysprites.add(mysteryhuman)
     listeboitedialoguesprites.add(boitedialogue)
 
@@ -299,7 +299,7 @@ def main():
                             else:
                                 olive.deplacerGauche([16, 17, 16])
                             epee.scrollingdroite()
-                            porte.scrollingdroite()
+                            #porte.scrollingdroite()
                             mysteryhuman.scrollingdroite()
                             bulle.scrollingdroite()
                             for brique in listebriquessprites:
@@ -320,7 +320,7 @@ def main():
                                 listeframes = [16, 17, 16]
                                 olive.deplacerDroite(listeframes)
                             epee.scrollinggauche()
-                            porte.scrollinggauche()
+                            #porte.scrollinggauche()
                             mysteryhuman.scrollinggauche()
                             bulle.scrollinggauche()
                             for brique in listebriquessprites:
@@ -459,9 +459,9 @@ def main():
         #############################################################################
         if olive.level == 2:
             # listemusiques[1].stop()
-
+            print(olive.decory)
             current_timer += dt
-            # print(olive.entraindesauter)
+            #
             '''for brique in listebriquessprites:
                 brique.kill()'''
             for oeil in listeoeilsprites:
@@ -473,7 +473,7 @@ def main():
             """for sol in listesolsprites:
                 sol.kill()"""
 
-            sol.rect.top = fenetrehauteur - 10
+            #sol.rect.top = fenetrehauteur - 10
             #########################################
             # Gestion des évènements clavier - level 2
             #########################################
@@ -517,12 +517,12 @@ def main():
                         olive.entraindesauterL2 == True
 
                     ):
-                        epee.scrollingbas(olive.offset//4)
+                        epee.scrollingbas(olive.offset/2)
                         for brique in listebriquessprites:
-                            brique.scrollingbas(olive.offset//4)
-                        sol.scrollingbas(olive.offset//4)
+                            brique.scrollingbas(olive.offset/2)
+                        sol.rect.y += olive.offset/2
 
-                        decory += olive.decory*4
+                        decory += olive.decory*2
 
                     else:
 
