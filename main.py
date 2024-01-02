@@ -194,7 +194,7 @@ def main():
     # démarrage de la musique de début après un delay
     #########################################
     pg.time.wait(200)
-    listemusiques[1].play(0, 0, 500)  # pour écran d'accueil
+    listemusiques[1].play(1, 0, 500)  # pour écran d'accueil
     #######################################################################################
     #                               boucle principale du jeu                              #
     #######################################################################################
@@ -213,7 +213,7 @@ def main():
         ##################################################################################
         #                       niveau 0 - Splash screen
         ##################################################################################
-        if level == 0:
+        if olive.level == 0:
             pg.key.set_repeat(20, 0)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -221,7 +221,7 @@ def main():
                     pg.quit()
                     sys.exit()
                 if event.type == pg.KEYDOWN:
-                    level = 1
+                    olive.level = 1
 
             fenetre.fill(fenetrecouleur)
             splash = pg.image.load("img/écran titre final.png").convert_alpha()
@@ -255,8 +255,8 @@ def main():
         ############################################################################
         #                            ** niveau 1 **
         ############################################################################
-        if level == 1:
-            olive.level = 2
+        if olive.level == 1:
+            olive.level = 1
             pg.key.set_repeat(20, 0)
             listemusiques = []
             current_timer += dt
@@ -277,7 +277,7 @@ def main():
 
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_1:
-                        level = 1
+                        olive.level = 1
 
                     if event.key == pg.K_2:
                         """listeglobalesprites.empty()
@@ -285,7 +285,7 @@ def main():
                         for sprite in listeglobalesprites :
                             print(sprite)
                             sprite.kill()"""
-                        level = 2
+                        olive.level = 2
 
                     if event.key == pg.K_ESCAPE:
                         jeu = False
@@ -404,13 +404,15 @@ def main():
                 fenetre,
                 boitedialogue,
                 bulle,
+                olive,
+                zonescoreetvie
             )
 
             # listeglobalesprites.draw(fenetre)
             listesolsprites.draw(fenetre)
-            listebriquessprites.draw(fenetre)
-            listeoeilsprites.draw(fenetre)
-            listeepeesprites.draw(fenetre)
+            #listebriquessprites.draw(fenetre)
+            #listeoeilsprites.draw(fenetre)
+            #listeepeesprites.draw(fenetre)
             listemysterysprites.draw(fenetre)
             # listebullessprite.draw(fenetre)
             listeolivesprites.draw(fenetre)
@@ -451,11 +453,11 @@ def main():
             pg.time.delay(40)
             pg.display.flip()
             if mysteryhuman.findesequence == 1:
-                level = 2  # à la fin des dialogues on passe au niveau 2
+                olive.level = 2  # à la fin des dialogues on passe au niveau 2
         #############################################################################
         #                 ** Niveau 2 :  **
         #############################################################################
-        if level == 2:
+        if olive.level == 2:
             # listemusiques[1].stop()
 
             current_timer += dt
@@ -485,7 +487,7 @@ def main():
                 if event.type == pg.KEYDOWN:
 
                     if event.key == pg.K_1:
-                        level = 1
+                        olive.level = 1
                     if event.key == pg.K_ESCAPE:
                         jeu = False
                         pg.quit()
@@ -523,7 +525,7 @@ def main():
                         decory += olive.decory*4
 
                     else:
-                        epee.scrollingbas(0)
+
                         decorx +=0
                         decory -=0
 
@@ -628,7 +630,7 @@ def main():
 
             pg.time.delay(40)
             pg.display.flip()
-        if level == 3:
+        if olive.level == 3:
             pass
 
 

@@ -215,7 +215,7 @@ class Olive(Objet):
 
     def __init__(self, image, indexdefaut):
         Objet.__init__(self, image, indexdefaut)
-        self.level = 1
+        self.level = 0
         self.rect.y = 200
         self.offset = 0
         self.rect.left = (fenetrelargeur - self.rect.w) // 20
@@ -242,11 +242,15 @@ class Olive(Objet):
     def gravite(self, gravite):
         self.rect.y += gravite
 
-    def graviteL2(self, gravite):
+    def graviteL2(self, gravite, listeepeesprites, listebriquessprites):
 
         self.rect.y += 0
         if self.decory <= fenetrehauteur:
             self.decory += gravite // 4
+            for epee in listeepeesprites:
+                epee.rect.y += gravite //4
+            for briques  in listebriquessprites :
+                briques.rect.y += gravite //4
         else:
             self.decory += 0
 
@@ -333,7 +337,8 @@ class Olive(Objet):
         if self.level == 2:
             self.gravite(self.cstgravitaire)
 
-            self.graviteL2(self.cstgravitaire)
+            self.graviteL2(self.cstgravitaire, listeepeesprites, listebriquessprites)
+
 
         """if self.entraindesauterL2 == False:
             if self.rect.bottom >= fenetrehauteur - 6 :
@@ -403,8 +408,14 @@ class Olive(Objet):
                 self.mouvementsAnimationsFlip_x(listeframes[0])
 
             self.offset = int(self.hauteursaut**2 * (1 / 2) * self.signe)
-            self.rect.y -= self.offset
-            self.hauteursaut -= 1
+
+            if self.rect.top < 0:
+                self.rect.y += 0
+                self.sautinterrompu = True
+                self.entraindetomber = True
+            else :
+                self.rect.y -= self.offset
+                self.hauteursaut -= 1
 
             if self.hauteursaut < 0:
                 self.signe = -1
@@ -427,6 +438,7 @@ class Olive(Objet):
         self.signe = +1
         self.offset = 0
         if self.entraindesauterL2 == True:
+            print(self.rect.top)
 
             if self.direction == "D":
                 self.mouvementsAnimations(listeframes[0])
@@ -435,10 +447,17 @@ class Olive(Objet):
 
             self.offset = int(self.hauteursaut**2 * (1 / 2) * self.signe)
 
-            self.rect.y -= self.offset
-            self.decory -= self.offset
+            if self.rect.top < 0:
+                self.sautinterrompu = True
+                self.entraindetomberL2 = True
+                self.rect.y -= 0
+                self.decory -= 0
+                #self.hauteursaut = -1
+            else:
+                self.rect.y -= self.offset
+                self.decory -= self.offset
 
-            self.hauteursaut -= 1
+                self.hauteursaut -= 1
             if self.hauteursaut < 0:
                 self.signe = -1
                 self.entraindetomber = True
@@ -486,6 +505,8 @@ class Mysteryhuman(Objet):
         fenetre,
         boitedialogue,
         bulle,
+        olive,
+        zonescoreetvie,
     ):
 
         listecollisionmysteryhumanolive = pg.sprite.spritecollide(
@@ -562,8 +583,9 @@ class Mysteryhuman(Objet):
                 pg.time.wait(500)
             if self.sequence == 6:
                 self.findesequence = 1
-                listeolivesprite.rect.x = 200
-                listeolivesprite.rect.y = 200
+                olive.level = 2
+                olive.rect.x = 200
+                olive.rect.y = 200
 
         else:
             self.listesmusiquesL1[0].stop()

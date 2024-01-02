@@ -74,7 +74,7 @@ epee_y = fenetrehauteur - 500
 # Les briques :
 nbbriques = 20
 taillebrique = 60
-listepositionbriques = calculListePositionObjetsL2(nbbriques, taillebrique, fenetrelargeur, fenetrehauteur)
+listepositionbriques = calculListePositionBriquesL2(nbbriques, taillebrique, fenetrelargeur, fenetrehauteur)
 
 
 # les yeux :

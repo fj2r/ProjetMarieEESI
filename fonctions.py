@@ -23,7 +23,7 @@ def calculListePositionObjets(nb, taille) -> list:
         vec.append(position)
     return vec
 
-def calculListePositionObjetsL2(nb, taille, fenetrelargeur, fenetrehauteur) -> list:
+def calculListePositionBriquesL2(nb, taille, fenetrelargeur, fenetrehauteur) -> list:
     vec = []
     for i in range (0 , nb):
         position = (fenetrelargeur - taille*2, fenetrehauteur - (i * 300))

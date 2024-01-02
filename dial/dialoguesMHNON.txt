@@ -1,8 +1,8 @@
 ...;
-...;
-...;
-...;
-...;
+... ...;
+... ... ...;
+... ... ... ...;
+... ... ... ... ...;
 laisse-moi m'étouffer tranquille.;
 
 j'ai cru qu'on pouvait compter l'un sur l'autre,;
