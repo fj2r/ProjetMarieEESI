@@ -52,12 +52,12 @@ class Objet(pygame.sprite.Sprite):
         self.rect.move_ip(0, +offset)
 
     def mouvementsAnimations(self, i):
-        # print(i)
+
         self.image = self.listeimagespouranimation[i]
         pg.time.wait(10)
 
     def mouvementsAnimationsFlip_x(self, i):
-        # print(i)
+
         self.image = self.listeimageflip_x[i]
         pg.time.wait(10)
 
@@ -85,15 +85,12 @@ class Phylactere(Objet):
         self.calque.fill((255, 255, 255))
 
     def update(self) -> None:
-        # self.rect.right, self.rect.bottom = positionMH
-        # print(self.urldialogues)
+
         self.listedialogues = recupererdialogue(self.urldialogues)
         self.longueurlistedialogue = len(self.listedialogues)
         if self.indexdialogue <= self.longueurlistedialogue:
             self.image.blit(self.calque, (20, 20))
             self.genererPhylactere()  # on génère le phylactère à chaque update
-
-            # print(self.indexdialogue, "/", self.longueurlistedialogue)
 
     def genererPhylactere(self):
         """
@@ -246,7 +243,12 @@ class Olive(Objet):
             self.rect.y += gravite
 
     def graviteL2(
-        self, gravite, listeepeesprites, listebriquessprites, listeoeilsprites, mysteryhumancombat
+        self,
+        gravite,
+        listeepeesprites,
+        listebriquessprites,
+        listeoeilsprites,
+        mysteryhumancombat,
     ):
 
         self.rect.y += 0
@@ -258,7 +260,7 @@ class Olive(Objet):
                 briques.rect.y -= gravite // 2
             for oeil in listeoeilsprites:
                 oeil.rect.y -= gravite // 2
-            mysteryhumancombat.rect.y -= gravite //2
+            mysteryhumancombat.rect.y -= gravite // 2
         else:
             self.decory += 0
 
@@ -271,7 +273,7 @@ class Olive(Objet):
         listeoeilsprites,
         listemysterysprites,
         sol,
-        mysteryhumancombat
+        mysteryhumancombat,
     ):
 
         ##################################################
@@ -290,17 +292,17 @@ class Olive(Objet):
 
         ##################################################"
         if listecollisionoliveoeil:
-            # print("le doigt dans l'oeil !")
+
             self.listesfx[0].play(0, 0, 0)
             zonescoreetvie.calculScore(5)
         if listecollisionsoliveepee:
-            # print("voila il a l'épée !")
+
             self.estchevalier = True
             self.listesfx[0].play(0, 0, 0)
             zonescoreetvie.calculScore(20)
             self.index = 0
         if listecollisionolivemysteryhuman:
-            # print("Enfin le voilà !")
+
             pass
 
         if listecollisionsolivesbriques:
@@ -309,7 +311,7 @@ class Olive(Objet):
                 if self.rect.bottom >= brique.rect.top:
                     self.rect.bottom = brique.rect.top + 1
                     self.cstgravitaire = 0
-                # print(brique.rect.bottom)
+
                 if self.rect.bottom >= fenetrehauteur:
                     self.rect.bottom = brique.rect.top + 1
                     self.decory += 0
@@ -355,7 +357,7 @@ class Olive(Objet):
                 listeepeesprites,
                 listebriquessprites,
                 listeoeilsprites,
-                mysteryhumancombat
+                mysteryhumancombat,
             )
 
         """if self.entraindesauterL2 == False:
@@ -365,6 +367,16 @@ class Olive(Objet):
             else:
                 self.rect.move_ip(0, gravite)
                 self.decory += gravite"""
+
+    def attaque(self, listeframes):
+        if self.direction == "D":
+            self.mouvementsAnimations(listeframes[self.index])
+            self.index += 1
+            self.index = self.index % len(listeframes)
+        if self.direction == "G":
+            self.mouvementsAnimationsFlip_x(listeframes[self.index])
+            self.index += 1
+            self.index = self.index % len(listeframes)
 
     def deplacerGauche(self, listeframes):
 
@@ -492,7 +504,7 @@ class Olive(Objet):
             self.entraindetomber = False
             self.offset = 0
             self.signe = 1
-            self.hauteursaut = hauteursaut
+            # self.hauteursaut = hauteursaut
         # self.hauteursaut = hauteursautmax
 
 
@@ -503,8 +515,10 @@ class Mysteryhuman(Objet):
         self.vies = 1
         self.dommages = 1
         self.sequence = 0
+        self.sequenceL2 = 0
+
         self.index = 0
-        self.listeframesselever = [2, 4, 2, 4, 5, 7]
+        self.listeframesselever = [2, 2, 4, 4, 2, 2, 4, 4, 5, 5, 7, 7]
         self.index2 = 0
         self.listeframesparler = [10, 13, 14, 14, 13, 10]
         self.indexdialogue = 0
@@ -512,17 +526,23 @@ class Mysteryhuman(Objet):
         self.listeframesavaler = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
         self.index3 = 0
 
-        self.listeframescombat = [6, 21]
+        self.listeframescombat = [6, 6, 6, 6, 6, 21, 21, 21, 21, 21]
         self.indexcombat = 0
 
+        self.coupporte = False
+        self.listeframesblessure = [5, 5, 5, 6, 6, 6, 8, 8, 8, 9, 4, 3]
+        self.indexblessure = 0
+        self.blessure = 0
         self.reponse = 0
         self.findesequence = 0
+        self.currenttimer = 0
 
     def update(
         self,
         listeboitedialogue,
         listeolivesprite,
         listebullesprite,
+        listeballesprites,
         positionMH,
         fenetre,
         boitedialogue,
@@ -530,7 +550,9 @@ class Mysteryhuman(Objet):
         olive,
         zonescoreetvie,
     ):
-        if olive.level == 1 :
+        self.currenttimer += 1
+
+        if olive.level == 1:
             listecollisionmysteryhumanolive = pg.sprite.spritecollide(
                 self, listeolivesprite, False
             )
@@ -573,7 +595,7 @@ class Mysteryhuman(Objet):
                 if self.sequence == 3:  # si réponse oui -> dialogue continue
                     bulle.urldialogues = urldialoguesOUI
                     if bulle.indexdialogue < bulle.longueurlistedialogue:
-                        # print(bulle.indexdialogue, "/", bulle.longueurlistedialogue)
+
                         if self.index2 < len(self.listeframesparler):
                             self.parler()
 
@@ -588,7 +610,7 @@ class Mysteryhuman(Objet):
                     bulle.urldialogues = urldialoguesNON
                     if bulle.indexdialogue < bulle.longueurlistedialogue:
                         self.affichePortrait(fenetre)
-                        # print(bulle.indexdialogue, "/", bulle.longueurlistedialogue)
+
                         if self.index2 < len(self.listeframesparler):
                             self.parler()
 
@@ -607,6 +629,8 @@ class Mysteryhuman(Objet):
                     self.findesequence = 1
                     olive.level = 2
                     olive.rect.x = 200
+                    olive.decory = 500
+                    olive.decorx = 0
                     olive.rect.y = 200
 
             else:
@@ -614,21 +638,60 @@ class Mysteryhuman(Objet):
                 self.listesfx[2].stop()
 
         if olive.level == 2:
+            print(olive.rect.y, "-", self.rect.y)
 
-            if self.rect.bottom == olive.rect.y :
-                if self.indexcombat < len(self.listeframescombat):
-                    self.animationcombat()
-                    self.lancerballes()
+            if olive.rect.y - self.rect.y <= 200 and olive.rect.y - self.rect.y >= -200:
+                bulle.rect.right = self.rect.left + 50
+                bulle.rect.bottom = self.rect.top
+                bulle.urldialogues = urldialoguesCombat1
+
+                if bulle.indexdialogue < bulle.longueurlistedialogue:
+                    listebullesprite.draw(fenetre)
+                    if self.currenttimer % 100 == 0:
+                        bulle.indexdialogue +=1
                 else :
-                    self.indexcombat = 0
+                    bulle.indexdialogue = 0
+
+
+
+
+
+            listecollisionmysteryhumanolive = pg.sprite.spritecollide(
+                self, listeolivesprite, False
+            )
+            if listecollisionmysteryhumanolive:
+
+                if self.coupporte == True:
+                    self.blessure += 1
+                    if self.blessure < 3:
+                        if self.indexcombat < len(self.listeframescombat):
+                            self.animationcombat()
+                        else:
+                            self.indexcombat = 0
+                    if self.blessure % 30 == 0:
+                        if self.indexblessure < len(self.listeframesblessure):
+                            self.animationblessure()
+                        else:
+                            self.indexblessure = 0
+                else:
+                    if self.indexcombat < len(self.listeframescombat):
+                        self.animationcombat()
+
+            self.lancerballes(listeballesprites, listeolivesprite, zonescoreetvie)
+            listeballesprites.draw(fenetre)
+            self.coupporte = False
 
     def animationcombat(self):
         self.mouvementsAnimations((self.listeframescombat[self.indexcombat]))
         self.indexcombat += 1
-        #pg.time.wait(100)
 
-    def lancerballes(self):
-        pass
+    def animationblessure(self):
+        self.mouvementsAnimations((self.listeframesblessure[self.indexblessure]))
+        self.indexblessure += 1
+
+    def lancerballes(self, listeballesprites, listeolivesprite, zonescoreetvie):
+        for balle in listeballesprites:
+            balle.update(listeolivesprite, zonescoreetvie)
 
     def selever(self):
         self.listesmusiquesL1[0].play(0, 0, 0)
@@ -661,7 +724,7 @@ class Mysteryhuman(Objet):
 
     def affichePortrait(self, fenetre):
         self.urlportrait = urlportrait[0]
-        # print(self.urlportrait)
+
         self.portrait = pygame.image.load(self.urlportrait).convert_alpha()
         self.portrait.set_colorkey(couleurtransparente)
         self.portrait = pg.transform.scale2x(self.portrait)
@@ -679,19 +742,15 @@ class Mysteryhuman(Objet):
 
     def effacerPortrait(self, fenetre):
         self.portrait.fill(fenetrecouleur)
-        # print("calque")
 
     def genererdialogues(self, index):
         blabla = recupererdialogue(urldialogues)
-        # print(blabla)
 
     def attaque(self):
         pass
 
     def dialogue(self):
         pass
-
-
 
 
 class Epee(Objet):
@@ -705,8 +764,6 @@ class Epee(Objet):
 
     def scrollingdroite(self):
         self.rect.move_ip(vitesse, 0)
-
-
 
 
 class Porte(Objet):
@@ -751,32 +808,47 @@ class Oeil(Objet):
 class Balles(Objet):
     def __init__(self, images, indexdefaut):
         Objet.__init__(self, images, indexdefaut)
-        self.rect.x = fenetrelargeur // 2
+        self.rect.x = fenetrelargeur - 100
         self.rect.y = 0 + 10
         self.dommages = 1
-        self.signe = +1
+        self.vitesse = vitesse
+        self.signe_x = random.choice([-1, 1])
+        self.signe_y = random.choice([-1, 1])
+        self.alea = random.randint(1, 10)
 
     def update(self, listeolivesprite, zonescoreetvie):
-        self.signe = random.randint(-1, +1, 2)
-        self.alea = random.randint(1, 10, 1)
 
-        listecollisionballeolive = pg.sprite.spritecollide(self.listeolivesprite, True)
+        self.trajectoire()
+
+        listecollisionballeolive = pg.sprite.spritecollide(
+            self, listeolivesprite, False
+        )
         if listecollisionballeolive:
-            self.infligerdommages(zonescoreetvie)
+            ##pass
+            self.infligerdommages(zonescoreetvie, listeolivesprite)
 
-    def infligerdommages(self, zonescoreetvie):
+    def infligerdommages(self, zonescoreetvie, listeolivesprite):
+        for olive in listeolivesprite:
+            if olive.estchevalier == True:
+                zonescoreetvie.dommages = 1
+            if olive.estchevalier == False:
+                zonescoreetvie.dommage = 2
         zonescoreetvie.perteVies()
+        self.signe_x = -self.signe_x
+        self.signe_y = -self.signe_y
 
     def detruireballe(self):
         pass
 
     def trajectoire(self):
 
-        self.rect.move_ip(self.signe * vitesse * alea, vitesse)
-        if self.rect.left <= 0:
-            self.signe = -self.signe
-        if self.rect.right >= fenetrelargeur:
-            self.signe = -self.signe
+        self.rect.move_ip(self.signe_x * -self.vitesse, self.signe_y * self.vitesse)
+        if self.rect.top <= 0:
+            self.signe_y = -self.signe_y
+        if self.rect.bottom >= fenetrehauteur:
+            self.signe_y = -self.signe_y
+        if self.rect.left < 0 or self.rect.right > fenetrelargeur:
+            self.signe_x = -self.signe_x
 
     def scrollinggauche(self):
         self.rect.move_ip(-vitesse, 0)
@@ -823,15 +895,24 @@ class AffichageScoreVies(pygame.font.Font):
         self.policescore = pg.font.Font(policepardefaut, 24)
         self.policeviesolive = pg.font.Font(policepardefaut, 24)
         self.vies = vies
+        self.dommages = 2
         self.score = score
         self.iterateur = iterateur
+        self.intervallegainvie = 20
+
+    def update(self):
+        pass
 
     def calculScore(self, gain):
         self.score += gain
         self.iterateur += 1
+        self.modulo = self.score % self.intervallegainvie
+        if self.modulo == 0:
+            self.gainVies()
 
     def perteVies(self):
-        self.vies -= 1
+
+        self.vies -= self.dommages
         return self.vies
 
     def gainVies(self):

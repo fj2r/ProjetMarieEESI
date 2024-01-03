@@ -16,13 +16,13 @@ fenetretaille = (fenetrelargeur, fenetrehauteur)
 fenetrecouleur = (4, 9, 46)
 
 scoreinitial = 0
-vieoliveinitiale = 5
+vieoliveinitiale = 6
 estchevalier = False
 timer = 0.01  # réglage du délai entre deux frames
 
 vitesse = 10
 hauteursaut = 12
-gravite = 8
+gravite = 4
 entraindesauter = False
 
 
@@ -48,8 +48,9 @@ fichiersbriques = ["img/items/brique 1.png", "img/items/brique 2.png"]
 #############################################################
 fichiersitems = remplissageImagesSonsJeu("img/items/")
 fichiersoeil = ["img/items/oeil_a_collecter.png"]
-#fichiersportedefin = remplissageImagesSonsJeu("img/porte de fin/")
+# fichiersportedefin = remplissageImagesSonsJeu("img/porte de fin/")
 fichiersepee = ["img/items/jv epee.png"]
+fichiersballes = ["img/items/zattaque_lumière.png"]
 #############################################################
 # éléments de design des personnages
 #############################################################
@@ -67,22 +68,28 @@ urlportrait = ["img/perso mystère/MH_Face.png"]
 ##############################################################
 #               Configuration du nombre d'items et positions
 ##############################################################
+# MH en mode combat :
+MHcombat_x, MHcombat_y = fenetrelargeur - 100, fenetrehauteur-2000
 # Epee :
-epee_centerx = fenetrelargeur // 2
-epee_y = fenetrehauteur - 10000
+epee_centerx = 2000
+epee_y = fenetrehauteur - 2000
 
 # Les briques :
-nbbriques = 30
+nbbriques = 120
 taillebrique = 60
-listepositionbriques = calculListePositionBriquesL2(nbbriques, taillebrique, fenetrelargeur, fenetrehauteur)
+listepositionbriques = calculListePositionBriquesL2(
+    nbbriques, taillebrique, fenetrelargeur, fenetrehauteur,MHcombat_x, MHcombat_y
+)
 
 
 # les yeux :
-#positionoeil = [(500, 200), (800, 200), (1200, 200)]
+# positionoeil = [(500, 200), (800, 200), (1200, 200)]
 nboeil = 20
 tailloeil = 64
 
-listepositionyeux = calculListePositionYeuxL2(nboeil, tailloeil, fenetrelargeur, fenetrehauteur)
+listepositionyeux = calculListePositionYeuxL2(
+    nboeil, tailloeil, fenetrelargeur, fenetrehauteur
+)
 
 ##############################################################
 #              dialogues des personnages
@@ -91,6 +98,8 @@ fichierboitedialogue = ["img/bulles/bulle_informatons.png"]
 urldialogues = "dial/dialoguesMH.txt"
 urldialoguesOUI = "dial/dialoguesMHOUI.txt"
 urldialoguesNON = "dial/dialoguesMHNON.txt"
+urldialoguesCombat1 = "dial/dialoguesMHcombat1.txt"
+urldialoguesCombat2= "dial/dialoguesMHcombat2.txt"
 policedialogue = "ttf/PixeloidSans.ttf"
 taillepolicedialogues = 14
 textecouleur = (0, 0, 0)

@@ -24,19 +24,24 @@ def calculListePositionObjets(nb, taille) -> list:
         vec.append(position)
     return vec
 
-def calculListePositionBriquesL2(nb, taille, fenetrelargeur, fenetrehauteur) -> list:
+def calculListePositionBriquesL2(nb, taille, fenetrelargeur, fenetrehauteur,MHcombat_x, MHcombat_y) -> list:
     vec = []
 
     for i in range (0 , nb):
-        aleax = random.randint(0, fenetrelargeur-taille*2)
-        position = (aleax, fenetrehauteur - (i * 400))
+        aleax = random.randint(2000-fenetrelargeur//2, 2000+fenetrelargeur//2 - taille*2)
+        position = (aleax, fenetrehauteur - (i * aleax))
         vec.append(position)
+
+    position2 = (MHcombat_x , MHcombat_y)
+    vec.append(position2)
     return vec
+
+
 def calculListePositionYeuxL2(nb, taille, fenetrelargeur, fenetrehauteur) -> list:
     vec = []
 
     for i in range (0 , nb):
-        aleax = random.randint(0, fenetrelargeur-taille*2)
+        aleax = random.randint(2000-fenetrelargeur//2, 2000+fenetrelargeur//2 -taille*2)
         aleay = random.randint(0, nb)
         position = (aleax, fenetrehauteur - (i * aleay * 100))
         vec.append(position)

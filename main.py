@@ -9,6 +9,7 @@
 import sys, time
 import pygame as pg
 import pygame.freetype
+from pygame.locals import *
 from classes import *
 from config import *
 from fonctions import *
@@ -16,11 +17,12 @@ import random
 
 
 def main():
+    pg.mixer.pre_init(44100, 16, 2, 4096)
     pg.init()  # initialisation des modules
     pg.freetype.init()
     # pg.mixer.init()  # initialisation du mixer son
     # pg.font.init()  # initialisation des modules de police
-    FPS = 60
+    FPS = 30
     # #######################Constantes utiles#######################################
     fichiersmapsecrete = remplissageImagesSonsJeu("img/map_secrète/")
 
@@ -29,7 +31,7 @@ def main():
     ##################################################################################
     # construction de la fenêtre principale du jeu
     ##################################################################################
-    fenetre = pg.display.set_mode(fenetretaille)
+    fenetre = pg.display.set_mode(fenetretaille, DOUBLEBUF, 16)
     bgd = pg.display.set_mode(fenetretaille)
     fenetre.fill(fenetrecouleur)
     pg.display.set_caption("Olive et le MysteryHuMan")
@@ -128,6 +130,7 @@ def main():
     listeitemssprites = pg.sprite.Group()
     listeepeesprites = pg.sprite.Group()
     listeMHcombatsprites = pg.sprite.Group()
+    listeballesprites = pg.sprite.Group()
     # listeportesprites = pg.sprite.Group()
     listebriquessprites = pg.sprite.Group()
     listesolsprites = pg.sprite.Group()
@@ -147,11 +150,14 @@ def main():
     mysteryhuman = Mysteryhuman(mysteryhumanvecteurimagessprite, 2)
 
     mysteryhumancombatimagessprite = remplissageVecteur(fichiersmysteryhuman)
-    mysteryhumancombat = Mysteryhuman(mysteryhumancombatimagessprite, 8)
-    mysteryhumancombat.rect.right, mysteryhumancombat.rect.y = fenetrelargeur,0
+    mysteryhumancombat = Mysteryhuman(mysteryhumancombatimagessprite, 6)
+    mysteryhumancombat.rect.right, mysteryhumancombat.rect.y = MHcombat_x, MHcombat_y
 
     bullesvecteurimagessprite = remplissageVecteur(fichiersbulles)
     bulle = Phylactere(bullesvecteurimagessprite, 1)
+
+    ballevecteurimagessprite = remplissageVecteur(fichiersballes)
+    balle = Balles(ballevecteurimagessprite, 0)
 
     solvecteurimagessprites = remplissageVecteur(fichiersdecors)
     sol = Sol(solvecteurimagessprites, 2)
@@ -167,7 +173,7 @@ def main():
         oeil = Oeil(oeilvecteurimagesprite, 0)
         oeil.rect.x = listepositionyeux[i][0]
         oeil.rect.y = listepositionyeux[i][1]
-        print(oeil.rect.x, " ", oeil.rect.y)
+
 
         listeoeilsprites.add(oeil)
         listeglobalesprites.add(oeil)
@@ -195,7 +201,7 @@ def main():
     listemysterysprites.add(mysteryhuman)
     listeMHcombatsprites.add(mysteryhumancombat)
     listeboitedialoguesprites.add(boitedialogue)
-
+    listeballesprites.add(balle)
     listeglobalesprites.add(epee, sol)
     #########################################
     # démarrage de la musique de début après un delay
@@ -213,6 +219,11 @@ def main():
         pg.key.set_repeat(20, 0)
         keys = pg.key.get_pressed()
 
+        #########################################
+        # Gestion des vies
+        #########################################
+        if zonescoreetvie.vies <= 0:
+            olive.level = 3
         #########################################
         # Gestion des évènements clavier - jeu entier
         #########################################
@@ -259,6 +270,7 @@ def main():
             fenetre.blit(splashtexte2, (100, fenetrehauteur - 50 - taillepolice // 2))
             pg.time.delay(10)
             pg.display.flip()
+
         ############################################################################
         #                            ** niveau 1 **
         ############################################################################
@@ -286,11 +298,7 @@ def main():
                         olive.level = 1
 
                     if event.key == pg.K_2:
-                        """listeglobalesprites.empty()
-                        listeglobalesprites.clear(fenetre, bgd)
-                        for sprite in listeglobalesprites :
-                            print(sprite)
-                            sprite.kill()"""
+
                         olive.level = 2
 
                     if event.key == pg.K_ESCAPE:
@@ -399,7 +407,7 @@ def main():
                 listeoeilsprites,
                 listemysterysprites,
                 sol,
-                mysteryhumancombat
+                mysteryhumancombat,
             )
             listebullessprite.update()
             listeboitedialoguesprites.update()
@@ -407,6 +415,7 @@ def main():
                 listeboitedialoguesprites,
                 listeolivesprites,
                 listebullessprite,
+                listeballesprites,
                 positionMH,
                 fenetre,
                 boitedialogue,
@@ -466,7 +475,7 @@ def main():
         #############################################################################
         if olive.level == 2:
             # listemusiques[1].stop()
-            print(olive.decory)
+
             current_timer += dt
             #
             """for brique in listebriquessprites:
@@ -491,6 +500,7 @@ def main():
                     sys.exit()
                 if event.type == pg.KEYUP:
                     olive.index = 0  # remise
+
                 if event.type == pg.KEYDOWN:
 
                     if event.key == pg.K_1:
@@ -505,7 +515,16 @@ def main():
                         else:
                             olive.deplacerGaucheL2([16, 17, 16])
                         decorx -= 0
+                    if event.key == pg.K_SPACE:
+                        if olive.estchevalier == True:
+                            olive.attaque([16, 18, 16])
+                            mysteryhumancombat.coupporte = True
 
+
+                    if event.key == pg.K_c:
+                        olive.estchevalier = True
+                    if event.key == pg.K_b:
+                        balle.vitesse = 0
                     if event.key == pg.K_RIGHT:
                         if olive.estchevalier == False:
                             olive.deplacerDroiteL2([1, 2, 3, 2, 1])
@@ -515,7 +534,7 @@ def main():
                         decorx += 0
 
                     if olive.entraindesauterL2 == False:
-                        if event.key == pg.K_LCTRL or event.key == pg.K_SPACE:
+                        if event.key == pg.K_LCTRL:
                             olive.offset = 0
                             olive.entraindesauterL2 = True
 
@@ -602,6 +621,7 @@ def main():
                 listeboitedialoguesprites,
                 listeolivesprites,
                 listebullessprite,
+                listeballesprites,
                 positionMH,
                 fenetre,
                 boitedialogue,
@@ -609,7 +629,7 @@ def main():
                 olive,
                 zonescoreetvie,
             )
-            print(listeoeilsprites)
+
             # listeglobalesprites.draw(fenetre)
             listesolsprites.draw(fenetre)
             listebriquessprites.draw(fenetre)
@@ -647,8 +667,52 @@ def main():
 
             pg.time.delay(40)
             pg.display.flip()
+        ##################################################################################
+        #                       niveau 3 - Splash screen de fin
+        ##################################################################################
         if olive.level == 3:
-            pass
+            pg.key.set_repeat(20, 0)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    jeu = False
+                    pg.quit()
+                    sys.exit()
+                if event.type == pg.KEYDOWN:
+                    olive.level = 1
+
+            fenetre.fill(fenetrecouleur)
+            splash = pg.image.load("img/écran titre final.png").convert_alpha()
+            splash = pg.transform.scale(splash, (fenetrelargeur, fenetrehauteur))
+
+            police1 = pg.font.Font(policeurl, taillepolice*4)
+            police2 = pg.font.Font(policeurl, taillepolice*4)
+            splashtexte = police1.render(
+                "GAME OVER !",
+                True,
+                (255, 0, 0),
+                (0, 5, 255),
+            )
+            splashtexte2 = police2.render(
+                "GAME OVER !",
+                True,
+                (0, 0, 255),
+                (255, 5, 0),
+            )
+            pg.time.wait(500)
+            fenetre.blit(splash, (0, 0))
+            fenetre.blit(
+                splashtexte, (200, fenetrehauteur - 200 - taillepolice // 2)
+            )
+            pg.time.delay(10)
+            pg.display.flip()
+            pg.time.wait(500)
+            fenetre.fill(fenetrecouleur)
+            fenetre.blit(splash, (0, 0))
+            fenetre.blit(
+                splashtexte2, (200 , fenetrehauteur - 200  - taillepolice // 2)
+            )
+            pg.time.delay(10)
+            pg.display.flip()
 
 
 if __name__ == "__main__":
