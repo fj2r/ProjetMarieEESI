@@ -242,20 +242,22 @@ class Olive(Objet):
     def gravite(self, gravite):
         if self.rect.bottom >= fenetrehauteur:
             self.rect.y += 0
-        else :
+        else:
             self.rect.y += gravite
 
-    def graviteL2(self, gravite, listeepeesprites, listebriquessprites, listeoeilsprites):
+    def graviteL2(
+        self, gravite, listeepeesprites, listebriquessprites, listeoeilsprites
+    ):
 
         self.rect.y += 0
         if self.decory <= fenetrehauteur:
-            self.decory += gravite/2
+            self.decory += gravite / 2
             for epee in listeepeesprites:
-                epee.rect.y -= gravite/2
-            for briques  in listebriquessprites :
-                briques.rect.y -= gravite/2
-            for oeil in listeoeilsprites :
-                oeil.rect.y -= gravite/2
+                epee.rect.y -= gravite / 2
+            for briques in listebriquessprites:
+                briques.rect.y -= gravite / 2
+            for oeil in listeoeilsprites:
+                oeil.rect.y -= gravite / 2
         else:
             self.decory += 0
 
@@ -302,7 +304,9 @@ class Olive(Objet):
         if listecollisionsolivesbriques:
             self.cstgravitaire = 0
             for brique in listecollisionsolivesbriques:
-
+                if self.rect.bottom >= brique.rect.top:
+                    self.rect.bottom = brique.rect.top+1
+                    self.cstgravitaire = 0
                 #print(brique.rect.bottom)
                 if self.rect.bottom >= fenetrehauteur:
                     self.rect.bottom = brique.rect.top + 1
@@ -344,8 +348,12 @@ class Olive(Objet):
         if self.level == 2:
             self.gravite(self.cstgravitaire)
 
-            self.graviteL2(self.cstgravitaire, listeepeesprites, listebriquessprites,listeoeilsprites)
-
+            self.graviteL2(
+                self.cstgravitaire,
+                listeepeesprites,
+                listebriquessprites,
+                listeoeilsprites,
+            )
 
         """if self.entraindesauterL2 == False:
             if self.rect.bottom >= fenetrehauteur - 6 :
@@ -420,7 +428,7 @@ class Olive(Objet):
                 self.rect.y += 0
                 self.sautinterrompu = True
                 self.entraindetomber = True
-            else :
+            else:
                 self.rect.y -= self.offset
                 self.hauteursaut -= 1
 
@@ -445,7 +453,7 @@ class Olive(Objet):
         self.signe = +1
         self.offset = 0
         if self.entraindesauterL2 == True:
-            #print(self.rect.top)
+            # print(self.rect.top)
 
             if self.direction == "D":
                 self.mouvementsAnimations(listeframes[0])
@@ -459,28 +467,29 @@ class Olive(Objet):
                 self.entraindetomberL2 = True
                 self.rect.y = 0
                 self.decory -= 0
-                #self.hauteursaut = -1
+                # self.hauteursaut = -1
+                # self.hauteursaut = -1
             else:
                 self.rect.y -= self.offset
                 self.decory -= self.offset
 
                 self.hauteursaut -= 1
-            if self.hauteursaut < 0:
-                self.signe = -1
-                self.entraindetomber = True
-                self.entraindesauterL2 = False
-                self.decory += self.offset
-            if self.hauteursaut == -hauteursautmax - 1:
-                self.entraindesauter = False
-                self.entraindetomber = False
-                self.signe = 1
-                self.hauteursaut = hauteursautmax
+                if self.hauteursaut < 0:
+                    self.signe = -1
+                    self.entraindetomber = True
+                    self.entraindesauterL2 = False
+                    self.decory += self.offset
+                if self.hauteursaut == -hauteursautmax - 1:
+                    self.entraindesauter = False
+                    self.entraindetomber = False
+                    self.signe = 1
+                    self.hauteursaut = hauteursautmax
         if self.sautinterrompu == True and self.entraindetomber == True:
             self.entraindesauter = False
             self.entraindetomber = False
             self.offset = 0
             self.signe = 1
-            self.hauteursaut = hauteursautmax
+            self.hauteursaut = hauteursaut
         # self.hauteursaut = hauteursautmax
 
 
@@ -650,7 +659,7 @@ class Mysteryhuman(Objet):
 
     def effacerPortrait(self, fenetre):
         self.portrait.fill(fenetrecouleur)
-        #print("calque")
+        # print("calque")
 
     def genererdialogues(self, index):
         blabla = recupererdialogue(urldialogues)
