@@ -194,7 +194,7 @@ def main():
     listeglobalesprites.add(briqueMH)
     briqueOliveCombat = Brique(briquesvecteurimagessprites, 0)
     briqueOliveCombat.rect.right, briqueOliveCombat.rect.bottom = (
-        MHcombat_x,
+        MHcombat_x ,
         MHcombat_y,
     )
     listebriquessprites.add(briqueOliveCombat)
