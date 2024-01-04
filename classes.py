@@ -215,7 +215,7 @@ class Olive(Objet):
         self.level = 0
         self.rect.y = 200
         self.offset = 0
-        self.rect.left = (fenetrelargeur - self.rect.w) // 20
+        self.rect.left = (fenetrelargeur - self.rect.w) // 10
         self.hauteursaut = hauteursaut
         self.direction = "D"
         self.entraindesauter = False
@@ -274,6 +274,7 @@ class Olive(Objet):
         listemysterysprites,
         sol,
         mysteryhumancombat,
+        listepoemesprites,
     ):
 
         ##################################################
@@ -477,16 +478,18 @@ class Olive(Objet):
 
             self.offset = int(self.hauteursaut**2 * (1 / 2) * self.signe)
 
-            if self.rect.top < 0:
-                self.sautinterrompu = True
+            if self.rect.top < 50:
+                self.sautinterrompu = False
                 self.entraindetomberL2 = True
-                self.rect.y = 0
-                self.decory -= 0
+                self.rect.y = 50
+                self.signe = -self.signe
+
+                # self.decory -= 0
                 # self.hauteursaut = -1
                 # self.hauteursaut = -1
             else:
-                self.rect.y -= self.offset
-                self.decory -= self.offset
+                self.rect.y -= self.offset * 2
+                self.decory -= self.offset * 2
 
                 self.hauteursaut -= 1
                 if self.hauteursaut < 0:
@@ -503,7 +506,7 @@ class Olive(Objet):
             self.entraindesauter = False
             self.entraindetomber = False
             self.offset = 0
-            self.signe = 1
+            self.signe = -self.signe
             # self.hauteursaut = hauteursaut
         # self.hauteursaut = hauteursautmax
 
@@ -528,7 +531,7 @@ class Mysteryhuman(Objet):
 
         self.listeframescombat = [6, 6, 6, 6, 6, 21, 21, 21, 21, 21]
         self.indexcombat = 0
-
+        self.listeframesparchemin = [26]
         self.coupporte = False
         self.listeframesblessure = [5, 5, 5, 6, 6, 6, 8, 8, 8, 9, 4, 3]
         self.indexblessure = 0
@@ -536,6 +539,9 @@ class Mysteryhuman(Objet):
         self.reponse = 0
         self.findesequence = 0
         self.currenttimer = 0
+        self.estmort = False
+        self.trigger1 = 0
+        self.trigger2 = 0
 
     def update(
         self,
@@ -550,6 +556,7 @@ class Mysteryhuman(Objet):
         olive,
         zonescoreetvie,
     ):
+
         self.currenttimer += 1
 
         if olive.level == 1:
@@ -571,7 +578,10 @@ class Mysteryhuman(Objet):
 
                         if self.index2 < len(self.listeframesparler):
                             self.parler()
-
+                            bulle.rect.right, bulle.rect.bottom = (
+                                self.rect.left + 60 * 2,
+                                self.rect.top,
+                            )
                             listebullesprite.draw(
                                 fenetre
                             )  # affichage des sprites de bulles
@@ -595,6 +605,10 @@ class Mysteryhuman(Objet):
                 if self.sequence == 3:  # si réponse oui -> dialogue continue
                     bulle.urldialogues = urldialoguesOUI
                     if bulle.indexdialogue < bulle.longueurlistedialogue:
+                        bulle.rect.right, bulle.rect.bottom = (
+                            self.rect.left + 60 * 2,
+                            self.rect.top,
+                        )
 
                         if self.index2 < len(self.listeframesparler):
                             self.parler()
@@ -609,6 +623,11 @@ class Mysteryhuman(Objet):
 
                     bulle.urldialogues = urldialoguesNON
                     if bulle.indexdialogue < bulle.longueurlistedialogue:
+                        bulle.rect.right, bulle.rect.bottom = (
+                            self.rect.left + 60 * 2,
+                            self.rect.top,
+                        )
+
                         self.affichePortrait(fenetre)
 
                         if self.index2 < len(self.listeframesparler):
@@ -627,55 +646,81 @@ class Mysteryhuman(Objet):
                     pg.time.wait(500)
                 if self.sequence == 6:
                     self.findesequence = 1
+
+                    #olive.decory = 0
+                    #  olive.decorx = 0
                     olive.level = 2
-                    olive.rect.x = 200
-                    olive.decory = 500
-                    olive.decorx = 0
-                    olive.rect.y = 200
 
             else:
                 self.listesmusiquesL1[0].stop()
                 self.listesfx[2].stop()
 
         if olive.level == 2:
-            print(olive.rect.y, "-", self.rect.y)
+            # print(olive.rect.y, "-", self.rect.y)
+            if self.estmort == False:
+                if self.trigger1 == 0:
+                    bulle.rect.right = self.rect.left + 50
+                    bulle.rect.bottom = self.rect.top
+                    bulle.urldialogues = urldialoguesCombat1
+                    if (
+                        olive.rect.y - self.rect.y <= 200
+                        and olive.rect.y - self.rect.y >= -200
+                    ):
 
-            if olive.rect.y - self.rect.y <= 200 and olive.rect.y - self.rect.y >= -200:
-                bulle.rect.right = self.rect.left + 50
-                bulle.rect.bottom = self.rect.top
-                bulle.urldialogues = urldialoguesCombat1
+                        if bulle.indexdialogue < bulle.longueurlistedialogue:
+                            listebullesprite.draw(fenetre)
+                            if self.currenttimer % 100 == 0:
+                                bulle.indexdialogue += 1
+                        else:
+                            bulle.indexdialogue = 0
+                            self.trigger1 = 1
 
-                if bulle.indexdialogue < bulle.longueurlistedialogue:
-                    listebullesprite.draw(fenetre)
-                    if self.currenttimer % 100 == 0:
-                        bulle.indexdialogue +=1
-                else :
-                    bulle.indexdialogue = 0
+                listecollisionmysteryhumanolive = pg.sprite.spritecollide(
+                    self, listeolivesprite, False
+                )
+                if listecollisionmysteryhumanolive:
 
+                    if self.coupporte == True:
+                        self.blessure += 1
+                        self.listesfx[1].play(0, 0, 0)
+                        zonescoreetvie.calculScore(1)
+                        if self.blessure < 3:
+                            if self.indexcombat < len(self.listeframescombat):
+                                self.animationcombat()
+                            else:
+                                self.indexcombat = 0
+                        if self.blessure % 30 == 0:
+                            if self.indexblessure < len(self.listeframesblessure):
+                                self.animationblessure()
+                            else:
+                                self.estmort = True
+                                self.indexblessure = 0
+                                self.currenttimer = 0
+                                print("Fin du 1er dialogue")
 
-
-
-
-            listecollisionmysteryhumanolive = pg.sprite.spritecollide(
-                self, listeolivesprite, False
-            )
-            if listecollisionmysteryhumanolive:
-
-                if self.coupporte == True:
-                    self.blessure += 1
-                    if self.blessure < 3:
+                    else:
                         if self.indexcombat < len(self.listeframescombat):
                             self.animationcombat()
+            if self.estmort == True:
+                bulle.rect.right = self.rect.left + 50
+                bulle.rect.bottom = self.rect.top
+                bulle.urldialogues = urldialoguesCombat2
+                if (
+                    olive.rect.y - self.rect.y <= 200
+                    and olive.rect.y - self.rect.y >= -200
+                ):
+                    if self.trigger2 == 0:
+                        if bulle.indexdialogue < bulle.longueurlistedialogue:
+                            listebullesprite.draw(fenetre)
+                            if self.currenttimer % 100 == 0:
+                                bulle.indexdialogue += 1
                         else:
-                            self.indexcombat = 0
-                    if self.blessure % 30 == 0:
-                        if self.indexblessure < len(self.listeframesblessure):
-                            self.animationblessure()
-                        else:
-                            self.indexblessure = 0
-                else:
-                    if self.indexcombat < len(self.listeframescombat):
-                        self.animationcombat()
+                            bulle.indexdialogue = 0
+                            self.currenttimer = 0
+                            print("fin du second dialogue")
+                            self.trigger2 = 1
+                            pg.time.wait(2000)
+                            olive.level = 1
 
             self.lancerballes(listeballesprites, listeolivesprite, zonescoreetvie)
             listeballesprites.draw(fenetre)
@@ -684,6 +729,9 @@ class Mysteryhuman(Objet):
     def animationcombat(self):
         self.mouvementsAnimations((self.listeframescombat[self.indexcombat]))
         self.indexcombat += 1
+
+    def parchemin(self):
+        self.mouvementsAnimations((self.listeframesparchemin[0]))
 
     def animationblessure(self):
         self.mouvementsAnimations((self.listeframesblessure[self.indexblessure]))
@@ -751,6 +799,74 @@ class Mysteryhuman(Objet):
 
     def dialogue(self):
         pass
+
+
+class Poeme(Mysteryhuman):
+    def __init__(self, image, indexdefaut):
+        Objet.__init__(self, image, indexdefaut)
+        self.currenttimer = 0
+        self.trigger1 = 0
+        self.sequence = 0
+        self.urlportrait = urlfindujeu[0]
+        self.portrait = pygame.image.load(self.urlportrait).convert_alpha()
+        self.portrait.set_colorkey(couleurtransparente)
+        self.portrait = pg.transform.scale(
+            self.portrait, (fenetrelargeur, fenetrehauteur)
+        )
+
+    def update(
+        self,
+        listeboitedialogue,
+        listeolivesprite,
+        listebullesprite,
+        listeballesprites,
+        positionMH,
+        fenetre,
+        boitedialogue,
+        bulle,
+        olive,
+        zonescoreetvie,
+    ):
+        listecollisionpoemeolive = pg.sprite.spritecollide(
+            self, listeolivesprite, False
+        )
+        if olive.estchevalier == True:
+            if listecollisionpoemeolive:
+                if self.sequence == 0:
+                    self.currenttimer += 1
+                    if self.trigger1 == 0:
+                        bulle.rect.right = self.rect.left + 50
+                        bulle.rect.bottom = self.rect.top
+                        bulle.urldialogues = urlpoeme
+                        if bulle.indexdialogue < bulle.longueurlistedialogue:
+                            listebullesprite.draw(fenetre)
+                            if self.currenttimer % 100 == 0:
+                                bulle.indexdialogue += 1
+                        else:
+                            bulle.indexdialogue = 0
+                            self.trigger1 = 1
+                            print("c'est fini :( !!")
+
+                            self.sequence = 1
+                if self.sequence == 1:
+                    self.affichePortrait(fenetre)
+
+
+
+    def affichePortrait(self, fenetre):
+
+        self.rectportrait = self.portrait.get_rect()
+        self.rectportrait.h, self.rectportrait.w = (
+            self.portrait.get_height(),
+            self.portrait.get_width(),
+        )
+        self.rectportrait.centerx, self.rectportrait.centery = (
+            fenetrelargeur // 2,
+            fenetrehauteur // 2 - 100,
+        )
+
+        fenetre.blit(self.portrait, (0, 0))
+        pg.time.wait(5000)
 
 
 class Epee(Objet):

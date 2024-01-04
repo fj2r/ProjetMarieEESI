@@ -137,6 +137,7 @@ def main():
     listeoeilsprites = pg.sprite.Group()
     listemysterysprites = pg.sprite.Group()
     listeboitedialoguesprites = pg.sprite.Group()
+    listepoemesprites = pg.sprite.Group()
 
     #########################################
     # instanciation des sprites et ajout aux groupes de sprites pour les sprites répétitifs
@@ -148,10 +149,22 @@ def main():
 
     mysteryhumanvecteurimagessprite = remplissageVecteur(fichiersmysteryhuman)
     mysteryhuman = Mysteryhuman(mysteryhumanvecteurimagessprite, 2)
+    mysteryhuman.rect.right, mysteryhuman.rect.bottom = (
+        fenetrelargeur + 2000,
+        fenetrehauteur - 6,
+    )
 
     mysteryhumancombatimagessprite = remplissageVecteur(fichiersmysteryhuman)
     mysteryhumancombat = Mysteryhuman(mysteryhumancombatimagessprite, 6)
-    mysteryhumancombat.rect.right, mysteryhumancombat.rect.bottom = MHcombat_x, MHcombat_y
+    mysteryhumancombat.rect.right, mysteryhumancombat.rect.bottom = (
+        MHcombat_x,
+        MHcombat_y,
+    )
+
+    poemeimagesprite = remplissageVecteur(fichierspoeme)
+    poeme = Poeme(poemeimagesprite, 0)
+    poeme.rect.left = MHcombat_x - 500
+    poeme.rect.bottom = fenetrehauteur - 6
 
     bullesvecteurimagessprite = remplissageVecteur(fichiersbulles)
     bulle = Phylactere(bullesvecteurimagessprite, 1)
@@ -189,12 +202,15 @@ def main():
         listebriquessprites.add(brique)
         listeglobalesprites.add(brique)
     briqueMH = Brique(briquesvecteurimagessprites, 1)
-    briqueMH.rect.right, briqueMH.rect.top = MHcombat_x, MHcombat_y
+    briqueMH.rect.right, briqueMH.rect.top = (
+        MHcombat_x + 2000 + fenetrelargeur // 2 - 200,
+        MHcombat_y,
+    )
     listebriquessprites.add(briqueMH)
     listeglobalesprites.add(briqueMH)
     briqueOliveCombat = Brique(briquesvecteurimagessprites, 0)
-    briqueOliveCombat.rect.right, briqueOliveCombat.rect.bottom = (
-        MHcombat_x,
+    briqueOliveCombat.rect.right, briqueOliveCombat.rect.top = (
+        MHcombat_x + 2000 + fenetrelargeur // 2 - 400,
         MHcombat_y,
     )
     listebriquessprites.add(briqueOliveCombat)
@@ -212,6 +228,7 @@ def main():
     # listeportesprites.add(porte)
     listemysterysprites.add(mysteryhuman)
     listeMHcombatsprites.add(mysteryhumancombat)
+    listepoemesprites.add(poeme)
     listeboitedialoguesprites.add(boitedialogue)
     listeballesprites.add(balle)
     listeglobalesprites.add(epee, sol)
@@ -325,6 +342,7 @@ def main():
                             else:
                                 olive.deplacerGauche([16, 17, 16])
                             epee.scrollingdroite()
+                            poeme.scrollingdroite()
                             # porte.scrollingdroite()
                             mysteryhuman.scrollingdroite()
                             bulle.scrollingdroite()
@@ -346,6 +364,7 @@ def main():
                                 listeframes = [16, 17, 16]
                                 olive.deplacerDroite(listeframes)
                             epee.scrollinggauche()
+                            poeme.scrollinggauche()
                             # porte.scrollinggauche()
                             mysteryhuman.scrollinggauche()
                             bulle.scrollinggauche()
@@ -367,7 +386,8 @@ def main():
                     if event.key == pg.K_RETURN:
                         if bulle.indexdialogue < bulle.longueurlistedialogue:
                             bulle.indexdialogue += 1
-
+                    if event.key == pg.K_c:
+                        olive.estchevalier = True
                     if event.key == pg.K_o:
                         boitedialogue.reponse = 1
                         mysteryhuman.reponse = 1
@@ -420,6 +440,7 @@ def main():
                 listemysterysprites,
                 sol,
                 mysteryhumancombat,
+                listepoemesprites,
             )
             listebullessprite.update()
             listeboitedialoguesprites.update()
@@ -435,9 +456,25 @@ def main():
                 olive,
                 zonescoreetvie,
             )
+            listepoemesprites.update(
+                listeboitedialoguesprites,
+                listeolivesprites,
+                listebullessprite,
+                listeballesprites,
+                positionMH,
+                fenetre,
+                boitedialogue,
+                bulle,
+                olive,
+                zonescoreetvie,
+            )
 
             # listeglobalesprites.draw(fenetre)
             listesolsprites.draw(fenetre)
+            if olive.estchevalier == True:
+
+                listepoemesprites.draw(fenetre)
+
             # listebriquessprites.draw(fenetre)
             # listeoeilsprites.draw(fenetre)
             # listeepeesprites.draw(fenetre)
@@ -624,6 +661,7 @@ def main():
                 listemysterysprites,
                 sol,
                 mysteryhumancombat,
+                listepoemesprites,
             )
             listebullessprite.update()
             listeboitedialoguesprites.update()

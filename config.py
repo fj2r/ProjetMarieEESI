@@ -63,16 +63,17 @@ fichiersoliveconcatenee = fichiersolive + fichiersolivechevalier
 
 fichiersmysteryhuman = remplissageImagesSonsJeu("img/perso mystère/")
 fichiersmysteryhumancombat = remplissageImagesSonsJeu("img/mystery_human_combat/")
-
+fichierspoeme = ["img/map_secrète/poème_secret.png"]
 urlportrait = ["img/perso mystère/MH_Face.png"]
+urlfindujeu = ["img/olive_trouve_épée_image entière.png"]
 ##############################################################
 #               Configuration du nombre d'items et positions
 ##############################################################
 # MH en mode combat :
-MHcombat_x, MHcombat_y = fenetrelargeur - 100, fenetrehauteur-2000
+MHcombat_x, MHcombat_y = fenetrelargeur - 100, fenetrehauteur-26500
 # Epee :
-epee_centerx = 2000
-epee_y = fenetrehauteur - 2000
+epee_centerx = 2700
+epee_y = fenetrehauteur - 5000
 
 # Les briques :
 nbbriques = 120
@@ -84,7 +85,7 @@ listepositionbriques = calculListePositionBriquesL2(
 
 # les yeux :
 # positionoeil = [(500, 200), (800, 200), (1200, 200)]
-nboeil = 20
+nboeil = 30
 tailloeil = 64
 
 listepositionyeux = calculListePositionYeuxL2(
@@ -100,6 +101,8 @@ urldialoguesOUI = "dial/dialoguesMHOUI.txt"
 urldialoguesNON = "dial/dialoguesMHNON.txt"
 urldialoguesCombat1 = "dial/dialoguesMHcombat1.txt"
 urldialoguesCombat2= "dial/dialoguesMHcombat2.txt"
+urlpoeme = "dial/poeme.txt"
+
 policedialogue = "ttf/PixeloidSans.ttf"
 taillepolicedialogues = 14
 textecouleur = (0, 0, 0)
