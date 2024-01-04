@@ -151,7 +151,7 @@ def main():
 
     mysteryhumancombatimagessprite = remplissageVecteur(fichiersmysteryhuman)
     mysteryhumancombat = Mysteryhuman(mysteryhumancombatimagessprite, 6)
-    mysteryhumancombat.rect.right, mysteryhumancombat.rect.y = MHcombat_x, MHcombat_y
+    mysteryhumancombat.rect.right, mysteryhumancombat.rect.bottom = MHcombat_x, MHcombat_y
 
     bullesvecteurimagessprite = remplissageVecteur(fichiersbulles)
     bulle = Phylactere(bullesvecteurimagessprite, 1)
@@ -174,7 +174,6 @@ def main():
         oeil.rect.x = listepositionyeux[i][0]
         oeil.rect.y = listepositionyeux[i][1]
 
-
         listeoeilsprites.add(oeil)
         listeglobalesprites.add(oeil)
 
@@ -186,8 +185,21 @@ def main():
         brique = Brique(briquesvecteurimagessprites, 0)
         brique.rect.x = listepositionbriques[i][0]
         brique.rect.y = listepositionbriques[i][1]
+
         listebriquessprites.add(brique)
         listeglobalesprites.add(brique)
+    briqueMH = Brique(briquesvecteurimagessprites, 1)
+    briqueMH.rect.right, briqueMH.rect.top = MHcombat_x, MHcombat_y
+    listebriquessprites.add(briqueMH)
+    listeglobalesprites.add(briqueMH)
+    briqueOliveCombat = Brique(briquesvecteurimagessprites, 0)
+    briqueOliveCombat.rect.right, briqueOliveCombat.rect.bottom = (
+        MHcombat_x,
+        MHcombat_y,
+    )
+    listebriquessprites.add(briqueOliveCombat)
+    listeglobalesprites.add(briqueOliveCombat)
+
     #########################################
     # remplissage des groupes de sprites pour les sprites non répétitifs
     #########################################
@@ -520,7 +532,6 @@ def main():
                             olive.attaque([16, 18, 16])
                             mysteryhumancombat.coupporte = True
 
-
                     if event.key == pg.K_c:
                         olive.estchevalier = True
                     if event.key == pg.K_b:
@@ -684,8 +695,8 @@ def main():
             splash = pg.image.load("img/écran titre final.png").convert_alpha()
             splash = pg.transform.scale(splash, (fenetrelargeur, fenetrehauteur))
 
-            police1 = pg.font.Font(policeurl, taillepolice*4)
-            police2 = pg.font.Font(policeurl, taillepolice*4)
+            police1 = pg.font.Font(policeurl, taillepolice * 4)
+            police2 = pg.font.Font(policeurl, taillepolice * 4)
             splashtexte = police1.render(
                 "GAME OVER !",
                 True,
@@ -700,17 +711,13 @@ def main():
             )
             pg.time.wait(500)
             fenetre.blit(splash, (0, 0))
-            fenetre.blit(
-                splashtexte, (200, fenetrehauteur - 200 - taillepolice // 2)
-            )
+            fenetre.blit(splashtexte, (200, fenetrehauteur - 200 - taillepolice // 2))
             pg.time.delay(10)
             pg.display.flip()
             pg.time.wait(500)
             fenetre.fill(fenetrecouleur)
             fenetre.blit(splash, (0, 0))
-            fenetre.blit(
-                splashtexte2, (200 , fenetrehauteur - 200  - taillepolice // 2)
-            )
+            fenetre.blit(splashtexte2, (200, fenetrehauteur - 200 - taillepolice // 2))
             pg.time.delay(10)
             pg.display.flip()
 
