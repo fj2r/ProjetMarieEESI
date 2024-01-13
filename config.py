@@ -22,7 +22,7 @@ timer = 0.01  # réglage du délai entre deux frames
 
 vitesse = 10
 hauteursaut = 12
-gravite = 4
+gravite = 6
 entraindesauter = False
 
 
@@ -48,7 +48,7 @@ fichiersbriques = ["img/items/brique 1.png", "img/items/brique 2.png"]
 #############################################################
 fichiersitems = remplissageImagesSonsJeu("img/items/")
 fichiersoeil = ["img/items/oeil_a_collecter.png"]
-# fichiersportedefin = remplissageImagesSonsJeu("img/porte de fin/")
+fichiersportedefin = remplissageImagesSonsJeu("img/porte de fin/")
 fichiersepee = ["img/items/jv epee.png"]
 fichiersballes = ["img/items/zattaque_lumière.png"]
 #############################################################
@@ -70,7 +70,7 @@ urlfindujeu = ["img/olive_trouve_épée_image entière.png"]
 #               Configuration du nombre d'items et positions
 ##############################################################
 # MH en mode combat :
-MHcombat_x, MHcombat_y = fenetrelargeur - 100, fenetrehauteur-26500
+MHcombat_x, MHcombat_y = fenetrelargeur - 100, fenetrehauteur-27500
 # Epee :
 epee_centerx = 2700
 epee_y = fenetrehauteur - 5000

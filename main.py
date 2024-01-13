@@ -131,7 +131,7 @@ def main():
     listeepeesprites = pg.sprite.Group()
     listeMHcombatsprites = pg.sprite.Group()
     listeballesprites = pg.sprite.Group()
-    # listeportesprites = pg.sprite.Group()
+    listeportesprites = pg.sprite.Group()
     listebriquessprites = pg.sprite.Group()
     listesolsprites = pg.sprite.Group()
     listeoeilsprites = pg.sprite.Group()
@@ -190,8 +190,12 @@ def main():
         listeoeilsprites.add(oeil)
         listeglobalesprites.add(oeil)
 
-    # portevecteurimagesprite = remplissageVecteur(fichiersportedefin)
-    # porte = Porte(portevecteurimagesprite, 0)
+    portevecteurimagesprite = remplissageVecteur(fichiersportedefin)
+    porte = Porte(portevecteurimagesprite, 0)
+    porte.rect.right, porte.rect.bottom = (
+        MHcombat_x + 2000 + fenetrelargeur // 2 - 400,
+        MHcombat_y,
+    )
 
     briquesvecteurimagessprites = remplissageVecteur(fichiersbriques)
     for i in range(0, nbbriques):
@@ -225,7 +229,7 @@ def main():
     listesolsprites.add(sol)
     listeitemssprites.add(epee)
     listeepeesprites.add(epee)
-    # listeportesprites.add(porte)
+    listeportesprites.add(porte)
     listemysterysprites.add(mysteryhuman)
     listeMHcombatsprites.add(mysteryhumancombat)
     listepoemesprites.add(poeme)
@@ -247,7 +251,7 @@ def main():
         dt = horloge.tick(FPS) / 1000
         pg.key.set_repeat(20, 0)
         keys = pg.key.get_pressed()
-
+        print(olive.level)
         #########################################
         # Gestion des vies
         #########################################
@@ -308,6 +312,10 @@ def main():
             pg.key.set_repeat(20, 0)
             listemusiques = []
             current_timer += dt
+
+            if mysteryhumancombat.estmort == True:
+                for briques in listebriquessprites:
+                    briques.kill()
 
             #########################################
             # Gestion des évènements clavier - level 1
@@ -431,6 +439,7 @@ def main():
 
             # on update tous les sprites et on les affiche
             listeglobalesprites.update()  # test de collision dans la méthode update
+
             listeolivesprites.update(
                 listesolsprites,
                 listebriquessprites,
@@ -455,6 +464,7 @@ def main():
                 bulle,
                 olive,
                 zonescoreetvie,
+                porte,
             )
             listepoemesprites.update(
                 listeboitedialoguesprites,
@@ -467,6 +477,7 @@ def main():
                 bulle,
                 olive,
                 zonescoreetvie,
+                porte
             )
 
             # listeglobalesprites.draw(fenetre)
@@ -517,8 +528,8 @@ def main():
 
             pg.time.delay(40)
             pg.display.flip()
-            if mysteryhuman.findesequence == 1:
-                olive.level = 2  # à la fin des dialogues on passe au niveau 2
+            '''if mysteryhuman.findesequence == 1:
+                olive.level = 2'''  # à la fin des dialogues on passe au niveau 2
         #############################################################################
         #                 ** Niveau 2 :  **
         #############################################################################
@@ -590,6 +601,7 @@ def main():
 
                         mysteryhumancombat.scrollingbas(olive.offset // 2)
                         epee.scrollingbas(olive.offset // 2)
+                        porte.scrollingbas(olive.offset // 2)
                         for brique in listebriquessprites:
                             brique.scrollingbas(olive.offset // 2)
                         for oeil in listeoeilsprites:
@@ -652,6 +664,10 @@ def main():
 
             # on update tous les sprites et on les affiche
             listeglobalesprites.update()  # test de collision dans la méthode update
+            listeportesprites.update(
+                olive,
+                listeolivesprites,
+            )
             listeolivesprites.update(
                 listesolsprites,
                 listebriquessprites,
@@ -677,11 +693,13 @@ def main():
                 bulle,
                 olive,
                 zonescoreetvie,
+                porte,
             )
 
             # listeglobalesprites.draw(fenetre)
             listesolsprites.draw(fenetre)
             listebriquessprites.draw(fenetre)
+            listeportesprites.draw(fenetre)
             listeoeilsprites.draw(fenetre)
             listeepeesprites.draw(fenetre)
             listeMHcombatsprites.draw(fenetre)
@@ -691,19 +709,19 @@ def main():
             fenetre.blit(
                 herbedevant,
                 (
-                    decorx - herbedevant.get_width(),
-                    fenetrehauteur - herbedevant.get_height() - decory,
+                    0 - herbedevant.get_width(),
+                    sol.rect.y - herbedevant.get_height(),
                 ),
             )
             fenetre.blit(
                 herbedevant,
-                (decorx, fenetrehauteur - herbedevant.get_height() - decory),
+                (0, sol.rect.y - herbedevant.get_height()),
             )
             fenetre.blit(
                 herbedevant,
                 (
-                    decorx + herbedevant.get_width(),
-                    fenetrehauteur - herbedevant.get_height() - decory,
+                    0,
+                    sol.rect.y + herbedevant.get_height(),
                 ),
             )
             #########################################
